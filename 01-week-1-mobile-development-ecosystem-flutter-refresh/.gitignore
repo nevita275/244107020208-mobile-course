@@ -46,3 +46,12 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Platform folders (excluded from repo, exist locally only)
+android/
+ios/
+linux/
+macos/
+web/
+windows/
+.metadata

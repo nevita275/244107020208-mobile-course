@@ -15,7 +15,7 @@
 ## flutter doctor
 ![](screenshots/flutterdoctor.png)  
 ## flutter doctor --android-licenses
-Saya sempat dapat warning adi flutter doctor --android-licenses, sempat coba downgrade cmdline-tools, ternyata itu known bug, dan solusinya cukup lanjut flutter run karena license terhandle otomatis saat build <br>
+Saya sempat dapat warning di flutter doctor --android-licenses, sempat juga coba downgrade cmdline-tools, ternyata itu adalah known bug, dan solusinya adalah cukup lanjut flutter run karena license terhandle otomatis saat build <br>
 ![](screenshots/flutterlicenses.png)
 </blockquote>
 </details>

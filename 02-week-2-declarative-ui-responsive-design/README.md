@@ -79,7 +79,7 @@ Dengan breakpoint 200, grid selalu menampilkan 2 kolom di hampir semua kondisi l
 Karena mode Android fisik saya mode gelap jadi output dari ThemMode.system adalah tetap seperti ThemMode.dark<br>
 **3. Uji aplikasi dengan ukuran layar emulator yang berbeda.**<br>
 Saya memakai Android fisik dikarenakan RAM penyimpanan saya hanya 8GB.<br>
-**4. Tambahkan Semantics atau label yang bermakna pada elemen yang penting bagi screen reader.**
+**4. Tambahkan Semantics atau label yang bermakna pada elemen yang penting bagi screen reader.**<br>
 Tanpa Semantics, screen reader tetap bisa membaca teks yang ada, namun teks-teks tersebut dibaca sebagai elemen terpisah, misalnya "Assignments" dan "8" dibaca dua kali berurutan tanpa konteks bahwa keduanya saling berkaitan. Dengan Semantics(label: ...), seluruh child di dalamnya digabung menjadi satu unit semantic dengan label yang sudah disusun secara bermakna, sehingga screen reader membacanya sebagai satu kalimat utuh ("Assignments: 8"), bukan potongan-potongan info yang terpisah.
 </blockquote>
 </details>

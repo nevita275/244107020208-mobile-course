@@ -1,10 +1,9 @@
-| Keterangan | Informasi Detail |
-| :--- | :--- |
+
 | **Nama** | Nevita Triya Yuliana |
 | **NIM** | 244107020208 |
-| **Kelas** | TI-2F |
+| **Kelas** | TI-3F |
 | **Program Studi** | D4 Teknik Informatika |
-| **Instansi** | Politeknik Negeri Malang |
+| **Mata Kuliah** | Pemrograman Mobile |
 
 
 

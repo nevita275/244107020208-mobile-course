@@ -8,5 +8,5 @@
 
 ## 📂 Navigasi Tugas Perweek:
 
-1. [**Week 1: Pengantar Mobile Development**](./01-week-1-mobile-development-ecosystem-flutter-refresh) 
-2. [**Week 2: Declarative UI Responsive**](./02-week-2-declarative-ui-responsive-design)
+1. [**Week 1: Mobile Development Ecosystem & Flutter Refresh**](./01-week-1-mobile-development-ecosystem-flutter-refresh) 
+2. [**Week 2: Declarative UI & Responsive Designe**](./02-week-2-declarative-ui-responsive-design)

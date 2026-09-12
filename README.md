@@ -1,4 +1,4 @@
-
+| :--- | :--- |
 | **Nama** | Nevita Triya Yuliana |
 | **NIM** | 244107020208 |
 | **Kelas** | TI-3F |

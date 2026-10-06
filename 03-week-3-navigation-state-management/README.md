@@ -28,3 +28,30 @@
 </details>
 
 <br>
+
+<details>
+<summary><h3>3. State management dengan Riverpod/h3></summary>
+<br>
+<blockquote>
+
+## flutter pub add flutter_riverpod
+![](screenshots/flutterriverpod.png)<br>
+## 1. Bungkus aplikasi dengan ProviderScope di lib/main.dart:<br>
+![](screenshots/maintodo.png)<br>
+## 2. Buat state dan provider (lib/providers/todo_provider.dart):<br>
+![](screenshots/todoprovider.png)<br>
+## 3. Tampilkan dengan ConsumerWidget (lib/pages/todo_page.dart):<br>
+![](screenshots/todopage1.png)<br>
+![](screenshots/todopage2.png)<br>
+## 4. Hasil Run<br>
+| Tampilan hasil run | Tampilan Tambah |
+|---|---|
+| ![](screenshots/run2.png) | ![](screenshots/runtambahtodo.png) |
+<br>
+| Tampilan Sudah Selesai/Dicentang | Tampilan Hapus |
+|---|---|
+| ![](screenshots/rundonetodo.png) | ![](screenshots/runhapustodo.png) |
+</blockquote>
+</details>
+
+<br>

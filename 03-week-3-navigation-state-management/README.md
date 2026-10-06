@@ -30,7 +30,7 @@
 <br>
 
 <details>
-<summary><h3>3. State management dengan Riverpod/h3></summary>
+<summary><h3>3. State management dengan Riverpod</h3></summary>
 <br>
 <blockquote>
 
@@ -47,7 +47,9 @@
 | Tampilan hasil run | Tampilan Tambah |
 |---|---|
 | ![](screenshots/run2.png) | ![](screenshots/runtambahtodo.png) |
+
 <br>
+
 | Tampilan Sudah Selesai/Dicentang | Tampilan Hapus |
 |---|---|
 | ![](screenshots/rundonetodo.png) | ![](screenshots/runhapustodo.png) |

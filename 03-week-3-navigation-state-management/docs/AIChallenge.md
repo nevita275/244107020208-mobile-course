@@ -211,16 +211,14 @@ Penjelasan:
 
 ## 5. AI Verification Checklist
 
-(Diisi setelah Anda memeriksa kode sendiri.)
-
 | No | Pertanyaan | Temuan | Bukti (file / baris) |
 |---|---|---|---|
-| 1 | State diubah secara immutable? | (...) | (...) |
-| 2 | `ref.watch` hanya di `build`, `ref.read` di callback? | (...) | (...) |
-| 3 | Ketiga state AsyncValue ditangani? | (...) | (...) |
-| 4 | Provider bertipe eksplisit dan tidak duplikat? | (...) | (...) |
-| 5 | Memakai API Riverpod versi lama? | (...) | (...) |
-| 6 | `flutter analyze` dan `flutter test` lolos? | (...) | (...) |
+| 1 | State diubah secara immutable? | Ya. State tidak pernah dimutasi. Di `retry()` state diganti dengan objek baru lewat `state = const AsyncLoading()` lalu `state = await AsyncValue.guard(_fetch)`. Tidak ada `state.add()` atau perubahan list langsung. | `stats_provider.dart`, method `retry()` (baris ...) |
+| 2 | `ref.watch` hanya di `build`, `ref.read` di callback? | Ya. `ref.watch(statsProvider)` hanya dipakai di `build()`. `ref.read(statsProvider.notifier).retry()` dipakai di `onPressed` tombol Coba lagi. Di `_fetch()`, `ref.read` dipanggil sebelum `await`. | `stats_page.dart` (baris ...), `stats_provider.dart` (baris ...) |
+| 3 | Ketiga state AsyncValue ditangani? | Ya. `.when()` memiliki `loading` (spinner), `error` (pesan + tombol retry), dan `data` (ListView 3 item). Terbukti dengan 3 screenshot (run7, run8, run9). | `stats_page.dart`, blok `statsAsync.when(...)` |
+| 4 | Provider bertipe eksplisit dan tidak duplikat? | Ya. `statsProvider` bertipe `AsyncNotifierProvider<StatsNotifier, List<String>>`. Pencarian Ctrl+Shift+F menunjukkan tiap nama provider hanya dideklarasikan sekali, dan tidak bentrok dengan `todoListProvider` atau `productsProvider`. | `stats_provider.dart` (baris ...) |
+| 5 | Memakai API Riverpod versi lama? | Tidak. Memakai `AsyncNotifier`, `AsyncNotifierProvider`, dan `ConsumerWidget`. Tidak ditemukan `StateProvider`, `StateNotifierProvider`, atau `Consumer` bertingkat. | Pencarian Ctrl+Shift+F, 0 hasil |
+| 6 | `flutter analyze` dan `flutter test` lolos? | `flutter analyze` awalnya 2 info (`unintended_html_in_doc_comment`), setelah diperbaiki bersih. `flutter test test/stats_notifier_test.dart`: 3 dari 3 lolos. `flutter test` seluruh project: 1 gagal, yaitu `widget_test.dart` bawaan (tanpa `ProviderScope`, mencari angka counter), bukan bagian kode AI. | `flutteranalyzeai.png`, `fluttertestai.png` |
 
 ## 6. Hasil Testing
 

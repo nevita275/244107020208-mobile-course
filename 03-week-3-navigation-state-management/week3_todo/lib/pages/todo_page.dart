@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/todo_provider.dart';
+import '../widgets/add_todo_dialog.dart';
+import '../widgets/todo_tile.dart';
 
 class TodoPage extends ConsumerWidget {
   const TodoPage({super.key});
 
+  Future<void> _addTodo(BuildContext context, WidgetRef ref) async {
+    final title = await showDialog<String>(
+      context: context,
+      builder: (_) => const AddTodoDialog(),
+    );
+    if (title != null && title.isNotEmpty) {
+      ref.read(todoListProvider.notifier).add(title);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final todos = ref.watch(todoListProvider);
+    final notifier = ref.read(todoListProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(title: const Text('ToDo Riverpod')),
@@ -15,57 +28,19 @@ class TodoPage extends ConsumerWidget {
           ? const Center(child: Text('Belum ada tugas'))
           : ListView.builder(
               itemCount: todos.length,
-              itemBuilder: (context, index) => ListTile(
-                leading: Checkbox(
-                  value: todos[index].done,
-                  onChanged: (_) =>
-                      ref.read(todoListProvider.notifier).toggle(index),
-                ),
-                title: Text(
-                  todos[index].title,
-                  style: TextStyle(
-                      decoration: todos[index].done
-                          ? TextDecoration.lineThrough
-                          : null),
-                ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () =>
-                      ref.read(todoListProvider.notifier).remove(index),
-                ),
-              ),
+              itemBuilder: (context, i) {
+                final todo = todos[i];
+                return TodoTile(
+                  key: ValueKey(todo.id),
+                  todo: todo,
+                  onToggle: () => notifier.toggle(todo.id),
+                  onDelete: () => notifier.remove(todo.id),
+                );
+              },
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddDialog(context, ref),
+        onPressed: () => _addTodo(context, ref),
         child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  void _showAddDialog(BuildContext context, WidgetRef ref) {
-    final controller = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Tugas baru'),
-        content: TextField(controller: controller, autofocus: true),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
-          ),
-          FilledButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                ref
-                    .read(todoListProvider.notifier)
-                    .add(controller.text.trim());
-              }
-              Navigator.pop(context);
-            },
-            child: const Text('Tambah'),
-          ),
-        ],
       ),
     );
   }

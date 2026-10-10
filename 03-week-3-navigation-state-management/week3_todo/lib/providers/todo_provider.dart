@@ -16,7 +16,8 @@ class TodoListNotifier extends Notifier<List<Todo>> {
   @override
   List<Todo> build() => const [];
 
-  void add(String title) => state = [...state, Todo(id: _nextId++, title: title)];
+  void add(String title) =>
+      state = [...state, Todo(id: _nextId++, title: title)];
 
   void toggle(int id) => state = [
         for (final t in state)

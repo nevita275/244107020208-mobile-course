@@ -43,7 +43,7 @@
 <br>
 <blockquote>
 
-| Tampilan hasil no 1-10 | Tampilan hasil 89-100 | 
+| Tampilan hasil no 1-14 | Tampilan hasil 89-100 | 
 |---|---|
 | ![](screenshots/run6.png) |![](screenshots/run7.png) | 
 </blockquote>

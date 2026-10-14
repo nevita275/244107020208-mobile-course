@@ -23,9 +23,16 @@
 <br>
 <blockquote>
 
-| Tampilan hasil no 1-10 | Tampilan hasil 91-100 | Tampilan hasil mode pesawat |Tampilan hasil URL salah |
-|---|---|---|---|
-| ![](screenshots/run2.png) |![](screenshots/run3.png) | ![](screenshots/run4.png) | ![](screenshots/run5.png) |
+| Tampilan hasil no 1-10 | Tampilan hasil 91-100 | 
+|---|---|
+| ![](screenshots/run2.png) |![](screenshots/run3.png) |
+
+<br>
+
+|Tampilan hasil mode pesawat |Tampilan hasil URL salah |
+|---|---|
+|![](screenshots/run4.png) | ![](screenshots/run5.png) |
+
 </blockquote>
 </details>
 

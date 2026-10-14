@@ -1,15 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PostListPage extends StatelessWidget {
+import '../data/providers.dart';
+
+class PostListPage extends ConsumerWidget {
   const PostListPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final postsAsync = ref.watch(postListProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Posts'),
+        title: const Text('Posts API'),
+        actions: [
+          IconButton(
+            onPressed: () => ref.read(postListProvider.notifier).refresh(),
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Muat ulang',
+          ),
+        ],
       ),
-      body: const SizedBox.shrink(),
+      body: postsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stackTrace) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(friendlyErrorMessage(error), textAlign: TextAlign.center),
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: () => ref.invalidate(postListProvider),
+                  child: const Text('Coba lagi'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        data: (posts) {
+          if (posts.isEmpty) {
+            return const Center(child: Text('Belum ada data dari server.'));
+          }
+          return RefreshIndicator(
+            onRefresh: () => ref.read(postListProvider.notifier).refresh(),
+            child: ListView.builder(
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                final post = posts[index];
+                return ListTile(
+                  leading: CircleAvatar(child: Text(post.id.toString())),
+                  title: Text(
+                    post.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
+                    post.body,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }

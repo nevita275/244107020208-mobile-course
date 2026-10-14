@@ -6,13 +6,32 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:week4_api/main.dart';
+import 'package:week4_api/data/providers.dart';
+import 'package:week4_api/data/models/post.dart';
 
 void main() {
-  testWidgets('Displays the empty Posts page', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Menampilkan halaman Posts API yang kosong', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          postListProvider.overrideWith(() => _EmptyPostListNotifier()),
+        ],
+        child: const MyApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-    expect(find.text('Posts'), findsOneWidget);
+    expect(find.text('Posts API'), findsOneWidget);
+    expect(find.text('Belum ada data dari server.'), findsOneWidget);
   });
+}
+
+class _EmptyPostListNotifier extends PostListNotifier {
+  @override
+  Future<List<Post>> build() async => const [];
 }

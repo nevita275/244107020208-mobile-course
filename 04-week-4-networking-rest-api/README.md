@@ -17,3 +17,16 @@
 </details>
 
 <br>
+
+<details>
+<summary><h3>Praktikum 3: Pagination dasar</h3></summary>
+<br>
+<blockquote>
+
+| Tampilan hasil no 1-10 | Tampilan hasil 89-100 | 
+|---|---|
+| ![](screenshots/run6.png) |![](screenshots/run7.png) | 
+</blockquote>
+</details>
+
+<br>

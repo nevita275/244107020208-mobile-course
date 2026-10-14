@@ -744,3 +744,32 @@ void main() {
 </details>
 
 <br>
+
+<details>
+<summary><h3>7. Refleksi</h3></summary>
+<br>
+<blockquote>
+
+### 1. Kapan setState cukup, dan kapan state harus naik ke Riverpod?
+
+**setState cukup untuk state yang hanya dipakai satu widget dan boleh hilang saat widget hilang. Contohnya isi TextEditingController pada dialog tambah tugas, atau animasi sederhana. State perlu naik ke Riverpod ketika:**
+- dipakai oleh lebih dari satu halaman. Daftar ToDo dipakai di halaman Tugas dan harus tetap ada saat pindah ke Statistik.
+- harus bertahan saat widget dibongkar. Setelah pindah tab, daftar tugas tetap utuh.
+- perlu diturunkan menjadi data lain, seperti filteredTodosProvider yang membaca todoListProvider dan todoFilterProvider.
+- logikanya ingin diuji tanpa UI, seperti todo_providers_test.dart yang memakai ProviderContainer tanpa membangun widget.
+
+### 2. Perbedaan context.go dan context.push
+**context.go berpindah ke sebuah lokasi dan membentuk ulang stack sesuai hierarki route. Ini cocok untuk berpindah antar bagian utama aplikasi, redirect setelah login, atau membuka deep link. context.push menumpuk route baru di atas stack yang ada, sehingga tombol back kembali ke halaman sebelumnya, dan hasilnya bisa dikembalikan lewat pop. Ini cocok untuk halaman detail atau alur yang akan kembali ke halaman asal. Di aplikasi ini, perpindahan tab memakai navigationShell.goBranch, yang sifatnya seperti go: tab tidak menumpuk di stack, dan state tiap tab dipertahankan oleh StatefulShellRoute.indexedStack.**
+
+### 3. Bagaimana AsyncValue mencegah bug dibanding tiga boolean?
+**Dengan tiga boolean (isLoading, hasError, hasData), kombinasi mustahil bisa terjadi, misalnya isLoading dan hasError sama-sama true, atau semuanya false sehingga layar kosong. AsyncValue hanya bisa berada di satu kondisi pada satu waktu: AsyncLoading, AsyncData, atau AsyncError. Method when() juga mewajibkan ketiga kondisi ditangani, jadi UI error tidak terlupa dan layar tidak putih saat gagal. AsyncValue.guard menangkap exception otomatis menjadi AsyncError, tanpa try/catch yang tersebar. Di StatsPage, ketiganya tampil: spinner, pesan gagal dengan tombol Coba lagi, dan daftar 3 statistik.**
+
+## 4. Bagian mana dari hasil AI yang Anda perbaiki, dan mengapa?
+**Isi bagian ini dengan yang benar-benar Anda temukan, terutama dari stats_provider.dart dan checklist verifikasi di AI Challenge. Dari pengerjaan refactoring, temuan yang sudah nyata:**
+
+- Todo diberi id. Versi awal memakai index list. Setelah ada filter, index di tampilan tidak sama dengan index di list asli, sehingga toggle dan hapus bisa mengenai tugas yang salah. Memakai id memperbaikinya.
+- Test jobsheet diganti pump() menjadi pumpAndSettle() setelah menekan Tambah. Dialog masih beranimasi, sehingga TextField masih ada di tree dan teks bisa ditemukan dua kali.
+- Test navigasi gagal pada _verifyInvariants. Penyebabnya pump(Duration) dipanggil sebelum StatsPage dibangun, jadi timer 2 detik masih menggantung saat test selesai. Perbaikannya pump() dulu baru pump(3 detik), ditambah retry: _noRetry supaya percobaan ulang otomatis Riverpod tidak meninggalkan timer.
+- AddTodoDialog dijadikan StatefulWidget agar TextEditingController di-dispose dengan benar.
+</blockquote>
+</details>

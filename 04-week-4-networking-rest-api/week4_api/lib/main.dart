@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import 'pages/post_detail_page.dart';
 import 'pages/paged_post_page.dart';
+
+final _router = GoRouter(
+  routes: [
+    GoRoute(path: '/', builder: (context, state) => const PagedPostPage()),
+    GoRoute(
+      path: '/post/:id',
+      builder: (context, state) => PostDetailPage(
+        id: int.parse(state.pathParameters['id']!),
+      ),
+    ),
+  ],
+);
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -12,10 +26,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Week 4 - REST API',
       theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
-      home: const PagedPostPage(),
+      routerConfig: _router,
     );
   }
 }

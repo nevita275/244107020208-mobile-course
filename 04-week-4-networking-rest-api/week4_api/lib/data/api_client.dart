@@ -1,11 +1,15 @@
 import 'package:dio/dio.dart';
 
+// Satu batas waktu bersama agar konfigurasi timeout tidak tersebar di repository.
+const Duration apiTimeout = Duration(seconds: 10);
+
 Dio createDio() {
   final dio = Dio(
     BaseOptions(
       baseUrl: 'https://jsonplaceholder.typicode.com',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
+      connectTimeout: apiTimeout,
+      sendTimeout: apiTimeout,
+      receiveTimeout: apiTimeout,
       headers: {'Accept': 'application/json'},
     ),
   );

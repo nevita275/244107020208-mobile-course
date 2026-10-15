@@ -13,6 +13,10 @@ final postRepositoryProvider = Provider<PostRepository>(
   (ref) => PostRepository(ref.watch(dioProvider)),
 );
 
+final postDetailProvider = FutureProvider.family<Post, int>(
+  (ref, id) => ref.watch(postRepositoryProvider).fetchPost(id),
+);
+
 class PostListNotifier extends AsyncNotifier<List<Post>> {
   @override
   Future<List<Post>> build() {
@@ -57,33 +61,4 @@ Future<Object?> readPostsErrorOnce(ProviderContainer container) {
     completer.complete(next.error);
   }, fireImmediately: true);
   return completer.future.whenComplete(subscription.close);
-}
-
-String friendlyErrorMessage(Object error) {
-  if (error is! DioException) {
-    return 'Terjadi kesalahan tak terduga: $error';
-  }
-
-  switch (error.type) {
-    case DioExceptionType.connectionTimeout:
-    case DioExceptionType.sendTimeout:
-    case DioExceptionType.receiveTimeout:
-      return 'Koneksi lambat atau timeout. Periksa internet Anda lalu coba lagi.';
-    case DioExceptionType.connectionError:
-      return 'Tidak dapat terhubung ke server. Periksa internet Anda.';
-    case DioExceptionType.badResponse:
-      final code = error.response?.statusCode;
-      if (code == 404) {
-        return 'Data tidak ditemukan (404).';
-      }
-      if (code == 401 || code == 403) {
-        return 'Akses ditolak ($code). Periksa kredensial Anda.';
-      }
-      return 'Server bermasalah ($code). Coba lagi nanti.';
-    case DioExceptionType.cancel:
-    case DioExceptionType.badCertificate:
-    case DioExceptionType.transformTimeout:
-    case DioExceptionType.unknown:
-      return 'Terjadi kesalahan jaringan. Coba lagi.';
-  }
 }

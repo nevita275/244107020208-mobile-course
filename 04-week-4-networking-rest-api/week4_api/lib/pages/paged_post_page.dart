@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/paged_posts.dart';
 import '../data/providers.dart';
+import '../widgets/post_tile.dart';
 
 class PagedPostPage extends ConsumerStatefulWidget {
   const PagedPostPage({super.key});
@@ -88,15 +89,7 @@ class _PagedPostPageState extends ConsumerState<PagedPostPage> {
             );
           }
 
-          final post = state.items[index];
-          return ListTile(
-            leading: CircleAvatar(child: Text(post.id.toString())),
-            title: Text(
-              post.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          );
+          return PostTile(post: state.items[index], showBody: false);
         },
       ),
     );

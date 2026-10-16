@@ -44,7 +44,7 @@
 
 | Tampilan catatan saat mode pesawat | Tampilan post saat mode pesawat |
 |---|---|
-| <img src="screenshots/run8.png" width="350"> | <img src="screenshots/run9.png" width="350"> |
+| <img src="screenshots/run8.png" width="400"> | <img src="screenshots/run9.png" width="400"> |
 </blockquote>
 </blockquote>
 </details>

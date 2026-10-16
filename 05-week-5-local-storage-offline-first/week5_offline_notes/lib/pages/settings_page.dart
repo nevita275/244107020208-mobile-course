@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../data/prefs.dart';
+
+// Provider repository agar dependensi penyimpanan mudah diganti saat diuji.
+final prefsRepositoryProvider = Provider<PrefsRepository>(
+  (ref) => PrefsRepository(),
+);
+
+// Provider async mengelola status loading, error, dan nilai tema.
+final darkModeProvider = AsyncNotifierProvider<DarkModeNotifier, bool>(
+  DarkModeNotifier.new,
+);
+
+class DarkModeNotifier extends AsyncNotifier<bool> {
+  // Nilai awal dibaca dari preferensi lokal.
+  @override
+  Future<bool> build() async {
+    final repository = ref.watch(prefsRepositoryProvider);
+    await repository.markOpenedNow();
+    return repository.getDarkMode();
+  }
+
+  // Mengubah state dan menyimpan pilihan baru, sambil menangkap error.
+  Future<void> toggle() async {
+    final next = !(state.value ?? false);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(prefsRepositoryProvider).setDarkMode(next);
+      return next;
+    });
+  }
+}
+
+// Halaman pengaturan merender setiap kemungkinan state provider.
+class SettingsPage extends ConsumerWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final darkMode = ref.watch(darkModeProvider);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Pengaturan')),
+      body: darkMode.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stackTrace) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Preferensi tidak dapat dimuat.'),
+              TextButton(
+                onPressed: () => ref.invalidate(darkModeProvider),
+                child: const Text('Coba lagi'),
+              ),
+            ],
+          ),
+        ),
+        data: (enabled) => SwitchListTile(
+          title: const Text('Mode gelap'),
+          value: enabled,
+          onChanged: (_) => ref.read(darkModeProvider.notifier).toggle(),
+        ),
+      ),
+    );
+  }
+}

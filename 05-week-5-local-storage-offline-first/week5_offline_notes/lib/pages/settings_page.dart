@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/prefs.dart';
+import '../data/providers.dart';
 
 // Provider repository agar dependensi penyimpanan mudah diganti saat diuji.
 final prefsRepositoryProvider = Provider<PrefsRepository>(
@@ -40,28 +41,40 @@ class SettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final darkMode = ref.watch(darkModeProvider);
+    final forceOffline = ref.watch(forceOfflineProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Pengaturan')),
-      body: darkMode.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Preferensi tidak dapat dimuat.'),
-              TextButton(
-                onPressed: () => ref.invalidate(darkModeProvider),
-                child: const Text('Coba lagi'),
+      body: Column(
+        children: [
+          Expanded(
+            child: darkMode.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stackTrace) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Preferensi tidak dapat dimuat.'),
+                    TextButton(
+                      onPressed: () => ref.invalidate(darkModeProvider),
+                      child: const Text('Coba lagi'),
+                    ),
+                  ],
+                ),
               ),
-            ],
+              data: (enabled) => SwitchListTile(
+                title: const Text('Mode gelap'),
+                value: enabled,
+                onChanged: (_) => ref.read(darkModeProvider.notifier).toggle(),
+              ),
+            ),
           ),
-        ),
-        data: (enabled) => SwitchListTile(
-          title: const Text('Mode gelap'),
-          value: enabled,
-          onChanged: (_) => ref.read(darkModeProvider.notifier).toggle(),
-        ),
+          SwitchListTile(
+            title: const Text('Simulasi offline'),
+            value: forceOffline,
+            onChanged: (_) => ref.read(forceOfflineProvider.notifier).toggle(),
+          ),
+        ],
       ),
     );
   }

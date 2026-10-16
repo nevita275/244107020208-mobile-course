@@ -6,7 +6,7 @@
 # Local Storage & Offline First
 
 <details>
-<summary><h3>Praktikum 1: SharedPreferences</h3></summary>
+<summary><h1>Praktikum 1: SharedPreferences</h1></summary>
 <br>
 <blockquote>
 
@@ -19,13 +19,33 @@
 <br>
 
 <details>
-<summary><h3>Praktikum 2: SQLite dan repository catatan</h3></summary>
+<summary><h1>Praktikum 2: SQLite dan repository catatan</h1></summary>
 <br>
 <blockquote>
 
 | Tampilan catatan kosong | Tampilan tambah catatan | Tampilan catatan keisi 1 |
 |---|---|---|
 | ![](screenshots/run3.png) |![](screenshots/run4.png) | ![](screenshots/run5.png)
+</blockquote>
+</details>
+
+<br>
+
+<details>
+<summary><h1>Praktikum 3: Cache-first dan antrean sync</h1></summary>
+<br>
+<blockquote>
+
+| Tampilan run | Tampilan tersinkron | 
+|---|---|
+| ![](screenshots/run6.png) | ![](screenshots/run7.png) |
+
+<br>
+
+| Tampilan catatan saat mode pesawat | Tampilan post saat mode pesawat |
+|---|---|
+| ![](screenshots/run8.png)| ![](screenshots/run9.png)
+</blockquote>
 </blockquote>
 </details>
 

@@ -17,7 +17,7 @@
 
 <br>
 
-| Tampilan uji token 1 | Tampilan uji token 2 | Tampilan uji token 3 | Tampilan uji token 4
+| uji token(hapus tab) | uji token(masuk lagi ke aplikasi) | uji token(load melewati login) | uji token(langsung ke beranda) |
 |---|---|---|---|
 |![](screenshots/run4.png) | ![](screenshots/run5.png) |![](screenshots/run6.png) | ![](screenshots/run7.png)
 

@@ -16,6 +16,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final darkMode = ref.watch(darkModeProvider);
+    ref.watch(lastOpenedProvider);
 
     return MaterialApp(
       title: 'Pengaturan Catatan',

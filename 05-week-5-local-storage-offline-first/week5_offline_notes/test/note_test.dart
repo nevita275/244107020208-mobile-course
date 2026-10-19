@@ -10,6 +10,8 @@ class FakeNoteRepository extends NoteRepository {
 
   final List<Note> items;
   final bool throwError;
+  bool updateCalled = false;
+  Note? updatedNote;
 
   @override
   Future<List<Note>> fetchNotes() async {
@@ -18,9 +20,21 @@ class FakeNoteRepository extends NoteRepository {
   }
 
   @override
-  Future<int> countDirty() => Future.value(
-    items.where((note) => note.dirty).length,
-  );
+  Future<Note> updateNote(Note note) async {
+    updateCalled = true;
+    updatedNote = Note(
+      id: note.id,
+      title: note.title,
+      body: note.body,
+      updatedAt: DateTime.now(),
+      dirty: true,
+    );
+    return updatedNote!;
+  }
+
+  @override
+  Future<int> countDirty() =>
+      Future.value(items.where((note) => note.dirty).length);
 }
 
 void main() {
@@ -41,6 +55,15 @@ void main() {
     expect(restored.dirty, isTrue);
   });
 
+  test('update menolak catatan tanpa id sebelum membuka database', () async {
+    final repository = NoteRepository(
+      openDb: () => throw StateError('database tidak seharusnya dibuka'),
+    );
+    final note = Note(title: 'Edit', updatedAt: DateTime.now());
+
+    await expectLater(repository.updateNote(note), throwsArgumentError);
+  });
+
   test('provider sukses dengan repository palsu', () async {
     final container = ProviderContainer(
       overrides: [
@@ -55,6 +78,38 @@ void main() {
     final notes = await container.read(notesProvider.future);
     expect(notes.length, 1);
     expect(notes.first.title, 'Tes');
+  });
+
+  test('notifier memperbarui catatan lewat repository palsu', () async {
+    final initialNote = Note(
+      id: 1,
+      title: 'Judul lama',
+      body: 'Isi lama',
+      updatedAt: DateTime(2026, 9, 18),
+    );
+    final fakeRepository = FakeNoteRepository(items: [initialNote]);
+    final container = ProviderContainer(
+      overrides: [noteRepositoryProvider.overrideWithValue(fakeRepository)],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(notesProvider.future);
+    await container
+        .read(notesProvider.notifier)
+        .updateNote(
+          Note(
+            id: initialNote.id,
+            title: 'Judul baru',
+            body: 'Isi baru',
+            updatedAt: initialNote.updatedAt,
+          ),
+        );
+
+    final updatedNotes = container.read(notesProvider).requireValue;
+    expect(fakeRepository.updateCalled, isTrue);
+    expect(updatedNotes.single.title, 'Judul baru');
+    expect(updatedNotes.single.body, 'Isi baru');
+    expect(updatedNotes.single.dirty, isTrue);
   });
 
   test('provider error dengan repository palsu', () async {

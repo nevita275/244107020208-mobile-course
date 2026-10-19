@@ -102,14 +102,39 @@ class NotesPage extends ConsumerWidget {
           }
           return ListView.builder(
             itemCount: items.length,
-            itemBuilder: (context, index) => _NoteTile(
-              note: items[index],
-              onDelete: items[index].id == null
-                  ? null
-                  : () => ref
-                        .read(notesProvider.notifier)
-                        .remove(items[index].id!),
-            ),
+            itemBuilder: (context, index) {
+              final note = items[index];
+              return _NoteTile(
+                note: note,
+                onEdit: () async {
+                  final draft = await showDialog<_NoteDraft>(
+                    context: context,
+                    builder: (_) => _NoteDialog(
+                      initialTitle: note.title,
+                      initialBody: note.body,
+                      isEditing: true,
+                    ),
+                  );
+                  if (draft == null || note.id == null || !context.mounted) {
+                    return;
+                  }
+                  await ref
+                      .read(notesProvider.notifier)
+                      .updateNote(
+                        Note(
+                          id: note.id,
+                          title: draft.title,
+                          body: draft.body,
+                          updatedAt: note.updatedAt,
+                          dirty: note.dirty,
+                        ),
+                      );
+                },
+                onDelete: note.id == null
+                    ? null
+                    : () => ref.read(notesProvider.notifier).remove(note.id!),
+              );
+            },
           );
         },
       ),
@@ -117,7 +142,7 @@ class NotesPage extends ConsumerWidget {
         onPressed: () async {
           final draft = await showDialog<_NoteDraft>(
             context: context,
-            builder: (_) => const _AddNoteDialog(),
+            builder: (_) => const _NoteDialog(),
           );
           if (draft == null) return;
           await ref.read(notesProvider.notifier).add(draft.title, draft.body);
@@ -160,16 +185,40 @@ class _DirtyBadge extends StatelessWidget {
 
 // Baris catatan menampilkan isi ringkas dan aksi hapus.
 class _NoteTile extends StatelessWidget {
-  const _NoteTile({required this.note, required this.onDelete});
+  const _NoteTile({
+    required this.note,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   final Note note;
+  final VoidCallback onEdit;
   final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
+    final subtitle = <Widget>[
+      if (note.body.isNotEmpty) Text(note.body),
+      if (note.dirty)
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: Chip(
+            avatar: Icon(Icons.cloud_upload_outlined, size: 16),
+            label: Text('Belum sinkron'),
+            visualDensity: VisualDensity.compact,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+        ),
+    ];
     return ListTile(
+      onTap: onEdit,
       title: Text(note.title),
-      subtitle: note.body.isEmpty ? null : Text(note.body),
+      subtitle: subtitle.isEmpty
+          ? null
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: subtitle,
+            ),
       trailing: IconButton(
         tooltip: 'Hapus catatan',
         onPressed: onDelete,
@@ -180,17 +229,32 @@ class _NoteTile extends StatelessWidget {
 }
 
 // Form dialog memiliki lifecycle sendiri untuk mengelola controller teks.
-class _AddNoteDialog extends StatefulWidget {
-  const _AddNoteDialog();
+class _NoteDialog extends StatefulWidget {
+  const _NoteDialog({
+    this.initialTitle = '',
+    this.initialBody = '',
+    this.isEditing = false,
+  });
+
+  final String initialTitle;
+  final String initialBody;
+  final bool isEditing;
 
   @override
-  State<_AddNoteDialog> createState() => _AddNoteDialogState();
+  State<_NoteDialog> createState() => _NoteDialogState();
 }
 
-class _AddNoteDialogState extends State<_AddNoteDialog> {
+class _NoteDialogState extends State<_NoteDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _bodyController = TextEditingController();
+  late final TextEditingController _titleController;
+  late final TextEditingController _bodyController;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.initialTitle);
+    _bodyController = TextEditingController(text: widget.initialBody);
+  }
 
   @override
   void dispose() {
@@ -213,7 +277,7 @@ class _AddNoteDialogState extends State<_AddNoteDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Catatan baru'),
+      title: Text(widget.isEditing ? 'Edit catatan' : 'Catatan baru'),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -243,7 +307,10 @@ class _AddNoteDialogState extends State<_AddNoteDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Batal'),
         ),
-        FilledButton(onPressed: _submit, child: const Text('Tambah')),
+        FilledButton(
+          onPressed: _submit,
+          child: Text(widget.isEditing ? 'Simpan' : 'Tambah'),
+        ),
       ],
     );
   }

@@ -9,6 +9,13 @@ final prefsRepositoryProvider = Provider<PrefsRepository>(
   (ref) => PrefsRepository(),
 );
 
+final lastOpenedProvider = FutureProvider<String?>((ref) async {
+  final repository = ref.watch(prefsRepositoryProvider);
+  final previousOpened = await repository.getLastOpened();
+  await repository.markOpenedNow();
+  return previousOpened;
+});
+
 // Provider async mengelola status loading, error, dan nilai tema.
 final darkModeProvider = AsyncNotifierProvider<DarkModeNotifier, bool>(
   DarkModeNotifier.new,
@@ -19,7 +26,6 @@ class DarkModeNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
     final repository = ref.watch(prefsRepositoryProvider);
-    await repository.markOpenedNow();
     return repository.getDarkMode();
   }
 
@@ -73,6 +79,30 @@ class SettingsPage extends ConsumerWidget {
             title: const Text('Simulasi offline'),
             value: forceOffline,
             onChanged: (_) => ref.read(forceOfflineProvider.notifier).toggle(),
+          ),
+          Consumer(
+            builder: (context, ref, _) {
+              final lastOpened = ref.watch(lastOpenedProvider);
+              return lastOpened.when(
+                loading: () => const ListTile(
+                  title: Text('Terakhir dibuka'),
+                  subtitle: Text('Memuat waktu pembukaan sebelumnya...'),
+                ),
+                error: (error, stackTrace) => const ListTile(
+                  title: Text('Terakhir dibuka'),
+                  subtitle: Text('Waktu pembukaan sebelumnya tidak tersedia'),
+                ),
+                data: (value) => ListTile(
+                  title: const Text('Terakhir dibuka'),
+                  subtitle: Text(
+                    value == null
+                        ? 'Belum pernah dibuka'
+                        : DateTime.tryParse(value)?.toLocal().toString() ??
+                              value,
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),

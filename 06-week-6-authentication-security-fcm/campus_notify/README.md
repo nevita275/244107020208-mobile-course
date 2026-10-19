@@ -19,7 +19,7 @@
 
 | Tampilan Beranda | Tampilan Uji Token | 
 |---|---|
-|[▶ Tonton video beranda](videos/beranda.mp4) | [▶ Tonton video uji token](videos/uji-token.mp4) |
+|[](videos/beranda.mp4) | [](videos/uji-token.mp4) |
 </blockquote>
 </details>
 

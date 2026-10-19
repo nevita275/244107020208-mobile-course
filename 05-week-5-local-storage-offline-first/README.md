@@ -145,7 +145,7 @@ File screenshot di atas adalah lokasi yang disiapkan, bukan gambar yang sudah di
 
 Detail aturan sinkronisasi dan keterbatasannya: [docs/konflik-sync.md](docs/konflik-sync.md). Rincian evaluasi storage: [docs/ai-challenge.md](docs/ai-challenge.md).
 
-## ## Refleksi
+## Refleksi
 
 ### 1. Mengapa daftar catatan tidak boleh disimpan di SharedPreferences?
 

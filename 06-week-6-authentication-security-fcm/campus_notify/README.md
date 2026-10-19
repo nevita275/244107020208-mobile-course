@@ -11,15 +11,17 @@
 
 <blockquote>
 
-| Tampilan login | Tampilan Login Jika Sandi < 6> | 
-|---|---|
-|![](screenshots/run1.png) | ![](screenshots/run2.png) |
+| Tampilan login | Tampilan Login Jika Sandi < 6> | Tampilan Beranda |
+|---|---|---|
+|![](screenshots/run1.png) | ![](screenshots/run2.png) |![](screenshots/run3.png) |
 
 <br>
 
-| Tampilan Beranda | Tampilan Uji Token | 
-|---|---|
-|![](videos/beranda.mp4) |![](videos/uji-token.mp4) |
+| Tampilan uji token 1 | Tampilan uji token 2 | Tampilan uji token 3 | Tampilan uji token 4
+|---|---|---|---|
+|![](screenshots/run4.png) | ![](screenshots/run5.png) |![](screenshots/run6.png) | ![](screenshots/run7.png)
+
+ 
 </blockquote>
 </details>
 

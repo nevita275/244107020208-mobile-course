@@ -17,6 +17,10 @@ class FakePostRepository implements PostRepository {
   Future<List<Post>> fetchPosts() async => posts;
 
   @override
+  Future<Post> fetchPost(int id) async =>
+      posts.firstWhere((post) => post.id == id);
+
+  @override
   Future<List<Post>> fetchPostsPage({required int page, int limit = 10}) async {
     if (error != null) throw error!;
     return page == 1 ? posts : const [];

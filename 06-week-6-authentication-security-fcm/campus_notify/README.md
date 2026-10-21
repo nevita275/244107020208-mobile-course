@@ -11,7 +11,7 @@
 
 <blockquote>
 
-| Tampilan login | Tampilan Login Jika Sandi < 6> | Tampilan Beranda |
+| Tampilan login | Tampilan Login Jika Sandi < 6 | Tampilan Beranda |
 |---|---|---|
 |![](screenshots/run1.png) | ![](screenshots/run2.png) |![](screenshots/run3.png) |
 
@@ -21,7 +21,21 @@
 |---|---|---|---|
 |![](screenshots/run4.png) | ![](screenshots/run5.png) |![](screenshots/run6.png) | ![](screenshots/run7.png)
 
- 
+</blockquote>
+</details>
+
+<br>
+
+<details>
+<summary><h2>Praktikum 2: FCM, permission, dan token lifecycle</h2></summary>
+<br>
+
+<blockquote>
+
+| Tampilan debug FCM | Tampilan perizinan | Tampilan notifikasi |
+|---|---|---|
+|![](screenshots/fcm.png) | ![](screenshots/perizinan.png) |![](screenshots/notifikasi.png) |
+
 </blockquote>
 </details>
 

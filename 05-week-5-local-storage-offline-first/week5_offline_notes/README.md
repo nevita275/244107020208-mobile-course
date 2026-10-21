@@ -38,9 +38,9 @@
 <br>
 <blockquote>
 
-| Tampilan run | Tampilan tersinkron | 
+| Tampilan run | Tampilan tersinkron | Tampilan belum disinkron |
 |---|---|
-| ![](screenshots/run6.png) | ![](screenshots/run7.png) |
+| ![](screenshots/run6.png) | ![](screenshots/run7.png) | ![](screenshots/run10.png) |
 
 <br>
 

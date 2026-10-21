@@ -120,8 +120,6 @@ Draf kode yang dihasilkan AI tidak langsung digunakan seluruhnya, tetapi ditinja
 4. **Status autentikasi:** menunda navigasi dari notifikasi ketika proses autentikasi belum selesai agar pengguna tidak diarahkan ke halaman yang belum dapat diakses.
 5. **Verifikasi backend:** memastikan bahwa permintaan `POST /devices` pada mode debug masih menggunakan respons simulasi dan belum membuktikan bahwa token berhasil disimpan pada backend produksi.<br>
 
-Pemeriksaan tersebut penting karena kode yang dihasilkan AI masih perlu diverifikasi dari sisi keamanan, lifecycle aplikasi, validasi data, dan kesesuaiannya dengan implementasi sebenarnya. Dengan demikian, AI digunakan sebagai alat bantu pengembangan, sedangkan hasil akhirnya tetap perlu diperiksa dan diuji secara manual.
-
 
 </blockquote>
 </details>

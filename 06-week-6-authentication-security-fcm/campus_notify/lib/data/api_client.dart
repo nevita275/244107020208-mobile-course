@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import 'auth_repository.dart';
 import 'token_store.dart';
@@ -12,6 +13,19 @@ Dio buildApiClient(TokenStore store, AuthRepository auth) {
           final access = await store.readAccess();
           if (access != null) {
             options.headers['Authorization'] = 'Bearer $access';
+          }
+          if (kDebugMode &&
+              options.method == 'POST' &&
+              options.path == '/devices') {
+            // Simulasi backend /devices untuk pengembangan/debug saja.
+            handler.resolve(
+              Response<dynamic>(
+                requestOptions: options,
+                statusCode: 200,
+                data: {'status': 'ok'},
+              ),
+            );
+            return;
           }
           handler.next(options);
         },

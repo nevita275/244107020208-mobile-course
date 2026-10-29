@@ -20,33 +20,37 @@ dan commit langsung ke `main` perlu dicek kembali sebelum mengirim PR.
 - [x] Branch `develop` dibuat dari `origin/main` dan sudah dipush; isinya
   saat ini Week 1–7.
 - [x] Branch kerja `feature/08-week-8-mid-project-review` dibuat dari `develop`.
-- [x] Perubahan Week 8 sudah di-stage pada branch fitur lokal.
+- [x] Commit `dc39f06` sudah dipush pada branch fitur; branch tersebut
+  memuat Week 1–8.
 - [x] Satu project Week 7 dipertahankan sebagai fokus review Week 8.
-- [ ] Commit dan push branch fitur agar branch remote memuat Week 1–8.
-- [ ] Buat PR fitur ke `develop`; setelah review dan approve, merge agar
-  `develop` memuat Week 1–8.
+- [x] Masukan review teknis dengan gaya reviewer sejawat dicatat untuk dibahas
+  pada PR; persetujuan PR GitHub belum ada.
+- [ ] Buat issue Week 8; catat nomor dan tautannya.
+- [ ] Buat PR dengan base `develop` dan compare
+  `feature/08-week-8-mid-project-review`. Screenshot perbandingan saat ini
+  memilih `main`; ganti base sebelum membuat PR.
+- [ ] Minta reviewer yang ditugaskan memeriksa PR di GitHub dan mencatat
+  keputusan; masukan teknis di bawah bukan status approve GitHub.
+- [ ] Setelah PR ditinjau dan diputuskan, merge ke `develop` agar `develop`
+  memuat Week 1–8. Jangan merge langsung ke `main`.
 - [ ] Untuk Week 9–16, mulai tiap branch fitur dari `develop` terbaru dan
   merge PR yang sudah disetujui agar `develop` tetap kumulatif.
 - [x] `flutter analyze`, `dart format`, dan `flutter test` hijau; hasil ada di
   [`verification.md`](verification.md).
-- [ ] Buat issue dan PR kecil ke `develop`; isi template dan screenshot.
-- [ ] Pasangan melakukan review dengan checkout dan menjalankan aplikasi/test.
-- [ ] Catat minimal 2 temuan kebenaran, 1 arsitektur, 1 test, dan 1
-  keterbacaan; jangan mengarang komentar reviewer.
-- [ ] Tindak lanjuti komentar, minta re-review, dan tunggu **Approve**.
+- [ ] Tindak lanjuti temuan yang disetujui dan minta re-review sebelum merge.
 - [ ] Merge via review dan verifikasi issue tertutup; hapus branch remote setelah
   merge.
 - [ ] Perbarui status README dengan tautan issue/PR dan hasil review yang nyata.
 
-## Catatan peer review
+## Catatan review teknis untuk PR
 
 | Kategori | Temuan/tautan komentar | Tindak lanjut | Status |
 |---|---|---|---|
-| Kebenaran 1 | Menunggu reviewer | Menunggu author | Belum |
-| Kebenaran 2 | Menunggu reviewer | Menunggu author | Belum |
-| Arsitektur | Menunggu reviewer | Menunggu author | Belum |
-| Test | Menunggu reviewer | Menunggu author | Belum |
-| Keterbacaan | Menunggu reviewer | Menunggu author | Belum |
+| Kebenaran/state | Kegagalan add/edit/delete membuat state Notes menjadi error dan menyembunyikan daftar. | Pertahankan data terakhir, tampilkan pesan spesifik, dan uji repository failure. | Perlu perubahan/keputusan sebelum merge |
+| Test | Belum ada widget test untuk judul berisi spasi saja; validator memeriksa `trim().isEmpty`. | Tambahkan test whitespace sebagai regresi. | Saran |
+| Arsitektur | Provider Notes mengimpor implementasi repository untuk composition root. | Domain tetap bebas driver; pemindahan wiring tidak diperlukan. | Tidak perlu perubahan |
+| Cache Posts | Test menunjukkan kegagalan refresh jaringan mempertahankan cache dan meneruskan failure. | Pertahankan perilaku saat refactor. | Terverifikasi |
+| Keterbacaan/routing | Prompt menyebut GoRouter, sedangkan aplikasi memakai Navigator; UI Notes juga memuat dialog dan tile privat dalam satu file. | Tidak migrasi router tanpa kebutuhan; pemisahan widget dapat dipertimbangkan bila file terus tumbuh. | Saran opsional |
 
-Keputusan review akhir: **belum ada**. Review oleh teman dan merge tidak dapat
-disimulasikan oleh AI.
+Catatan ini adalah masukan teknis untuk dibahas pada PR. PR Week 8 belum dibuat,
+sehingga belum ada keputusan approve/request changes atau merge di GitHub.

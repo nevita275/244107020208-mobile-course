@@ -4,12 +4,6 @@
 
 # Mid Project Review & Code Review
 
-Codelab Week 8 melanjutkan project portfolio dari Week 5–7, bukan membuat
-aplikasi baru. Project ini memakai aplikasi Week 7: Notes offline-first dan
-Posts cache-first dengan feature-first Clean Architecture. Tujuan review
-tengah semester adalah membuktikan bahwa perubahan dapat dipahami, diuji, dan
-direview bersama sebelum fitur semester berikutnya ditambahkan.
-
 <details>
 <summary><h2>Praktikum 1: Hygiene branch dan commit</h2></summary>
 <br>
@@ -48,12 +42,14 @@ git status
 Saat menyiapkan project ini, `origin/main` berisi folder Week 1–7 dan belum
 memiliki branch remote `develop`. Branch `develop` kemudian dibuat dari
 `origin/main` dan sudah dipush ke remote, sehingga sekarang memuat folder Week
-1–7. Branch fitur Week 8 dibuat dari `develop`; setelah perubahan Week 8
-di-commit dan dipush, branch itu memuat seluruh folder Week 1–8.
+1–7. Branch fitur Week 8 dibuat dari `develop`; commit `dc39f06` sudah
+dipush, sehingga branch fitur memuat folder Week 1–8.
 
-Saat ini perubahan Week 8 sudah di-stage secara lokal, tetapi belum menjadi
-commit atau tersedia di GitHub. Jangan menganggap branch fitur remote atau PR
-sudah dibuat.
+Branch `main` dan `develop` saat ini berada pada commit yang sama; keduanya
+belum berisi Week 8. Branch fitur Week 8 sudah ada di GitHub, tetapi Pull
+Request belum dibuat. Perbandingan GitHub pada screenshot memilih `main` sebagai
+base; sebelum membuat PR, ubah base menjadi `develop` dan biarkan compare tetap
+`feature/08-week-8-mid-project-review`.
 
 ### Isi branch sekarang dan untuk Week 9–16
 
@@ -76,6 +72,9 @@ Setelah setiap PR disetujui dan di-merge, `develop` berisi semua minggu yang
 sudah selesai. Branch fitur minggu berikutnya dibuat dari `develop` terbaru,
 sehingga membawa folder minggu sebelumnya dan menambahkan pekerjaan minggu
 baru. Jangan merge Week 8 ke `develop` sebelum PR-nya direview dan disetujui.
+`main` adalah branch rilis; jangan masukkan Week 8 langsung ke `main`. Integrasi
+dari `develop` ke `main` dilakukan melalui PR rilis ketika kumpulan pekerjaan
+memang siap dirilis.
 
 Contoh audit tiga pesan commit sebelumnya dan perbaikannya:
 
@@ -112,25 +111,58 @@ di-revert.
 <br>
 <blockquote>
 
-### Membuat issue dan branch kerja
+### Membuat issue
 
-Sebelum membuka PR, buat issue yang menjelaskan masalah. Branch remote
-`develop` sudah tersedia dan berisi Week 1–7. Perubahan Week 8 sudah di-stage
-pada branch fitur lokal yang sedang digunakan. Setelah Anda meninjau daftar
-staged files, buat commit dan push branch fitur:
+Branch remote `develop` berisi Week 1–7, sedangkan
+`feature/08-week-8-mid-project-review` sudah berisi perubahan Week 8. Buat
+issue dulu agar tujuan PR dan kriteria selesai jelas:
 
-```powershell
-git status
-git diff --cached --check
-git commit -m "feat(week8): add mid-project review project"
-git push -u origin feature/08-week-8-mid-project-review
+1. Buka repository GitHub, pilih tab **Issues**, lalu **New issue**.
+2. Isi judul, misalnya `Week 8: mid-project review aplikasi portfolio`.
+3. Isi deskripsi dengan masalah, ruang lingkup review, dan kriteria selesai.
+   Contoh:
+
+   ```text
+   Masalah: project portfolio perlu diverifikasi sebelum pekerjaan Week 9.
+   Cakupan: review state/error Notes, validasi input, cache Posts,
+   dependency rule, test, dan dokumentasi.
+   Kriteria selesai: hasil analyze/test dicatat, temuan ditindaklanjuti,
+   serta PR ke develop direview sebelum merge.
+   ```
+
+4. Pilih **Submit new issue** dan catat nomor issue yang dibuat.
+
+### Membuat Pull Request
+
+Setelah issue dibuat, buka tab **Pull requests** → **New pull request**.
+Pada halaman perbandingan, atur:
+
+```text
+base:    develop
+compare: feature/08-week-8-mid-project-review
 ```
 
-Perintah `commit` dan `push` di atas dijalankan oleh Anda. Setelah branch fitur
-berisi Week 1–8 tersedia di GitHub, buat PR dari branch fitur ke `develop`.
-Jangan commit Week 8 langsung ke `develop`; merge melalui PR setelah review.
-Untuk Week 9 dan seterusnya, setelah PR minggu sebelumnya di-merge, buat
-branch fitur baru dari `develop` terbaru.
+Screenshot perbandingan sebelumnya memilih `main` sebagai base. Buka dropdown
+base dan ganti ke `develop`; jangan lanjutkan jika base masih `main`. Pastikan
+GitHub menampilkan perubahan Week 8 yang diharapkan, lalu pilih **Create pull
+request**.
+
+Isi judul, misalnya:
+
+```text
+feat(week8): mid-project review aplikasi portfolio
+```
+
+Di deskripsi PR, jelaskan masalah, solusi, cara uji, dan screenshot. Tambahkan
+`Closes #<nomor-issue>` menggunakan nomor issue yang baru dibuat. Jangan
+menggabungkan PR langsung ke `main`; target integrasi mingguan adalah
+`develop`. `main` tetap untuk rilis setelah pekerjaan di `develop` siap.
+
+**Catatan reproduksibilitas:** atas keputusan scope repository, manifest
+Flutter tidak ada dalam branch. Reviewer yang melakukan clone tidak dapat
+langsung menjalankan `flutter pub get`, `flutter analyze`, atau `flutter test`.
+Jelaskan keterbatasan ini pada PR atau sertakan file manifest yang dibutuhkan
+jika reviewer harus menjalankan ulang test dari clone.
 
 ### Isi PR
 
@@ -172,9 +204,33 @@ Dampak: aturan validasi sulit diuji terpisah.
 Usulan: tambahkan test untuk judul kosong dan spasi sebelum menyimpan.
 ```
 
-Belum ada review teman pada project ini. Isi temuan dan status review di
-[`docs/review-checklist.md`](docs/review-checklist.md) setelah review benar-
-benar dilakukan.
+#### Catatan review teknis untuk perubahan ini
+
+Berikut komentar konstruktif yang dapat dipakai untuk membahas PR. Temuan
+pertama perlu dipertimbangkan sebelum merge:
+
+1. **Kebenaran/state — perlu perubahan atau keputusan eksplisit.** Jika
+   repository gagal saat tambah, edit, atau hapus catatan, `AsyncValue.guard`
+   mengubah `notesProvider` menjadi error. Akibatnya daftar yang sebelumnya
+   tampil digantikan error umum. Pertahankan data terakhir dan tampilkan pesan
+   kegagalan yang sesuai aksi; tambahkan test untuk jalur gagal.
+2. **Test — saran.** Validator sudah menolak judul kosong dan memangkas spasi,
+   tetapi widget test baru mencakup nilai kosong. Tambahkan kasus judul yang
+   hanya berisi spasi agar aturan yang sama terlindungi.
+3. **Arsitektur — tidak perlu perubahan.** Provider yang merakit repository
+   dapat berperan sebagai composition root. Pemeriksaan menunjukkan domain
+   tidak mengimpor Flutter, Dio, atau SQLite; tidak perlu memindahkan wiring
+   hanya demi menghilangkan import tersebut.
+4. **Cache Posts — sudah tercakup.** Test refresh gagal memastikan data cache
+   tetap tersedia dan failure diteruskan ke state.
+5. **Keterbacaan — saran.** Pada perubahan berikutnya, pisahkan operasi
+   mutation Notes dari pemetaan tampilan error agar alur sukses/gagal lebih
+   mudah diikuti dan diuji.
+
+Catat keputusan atas setiap temuan dan tindak lanjut di
+[`docs/review-checklist.md`](docs/review-checklist.md). Komentar ini merupakan
+masukan teknis untuk dibahas; status PR tetap **belum di-approve** sampai
+review dan keputusan dicatat pada GitHub.
 
 ### Tindak lanjut dan merge
 
@@ -203,9 +259,17 @@ flutter devices
 flutter run -d <device-id>
 ```
 
-Runner platform seperti `android/`, `ios/`, dan desktop sengaja tidak disertakan
-dalam push portfolio ini. Setelah clone, buat ulang runner Android sebelum
-menjalankan aplikasi:
+Atas keputusan author, `pubspec.yaml`, `pubspec.lock`, dan
+`analysis_options.yaml` tidak ikut dipush. Karena itu folder Week 8 pada branch
+remote belum dapat berdiri sendiri sebagai package Flutter: reviewer tidak
+bisa menjalankan `flutter pub get`, `flutter analyze`, atau `flutter test` dari
+hasil clone sampai file konfigurasi itu disediakan. Pemeriksaan yang tercatat
+di bawah dilakukan pada workspace lokal yang masih memiliki file tersebut.
+Ini perlu dipertimbangkan sebelum meminta review yang harus dapat direproduksi.
+
+Runner platform seperti `android/`, `ios/`, dan desktop juga tidak disertakan
+dalam push portfolio ini. Setelah konfigurasi package tersedia, buat ulang
+runner Android sebelum menjalankan aplikasi:
 
 ```powershell
 flutter create --platforms android .
@@ -237,14 +301,15 @@ Hasil yang sudah dijalankan pada salinan Week 8:
 | Build dan peluncuran Android | Berhasil pada Android 16. |
 
 Rincian dan batas uji manual ada di [`docs/verification.md`](docs/verification.md).
-CI belum berjalan karena branch belum dipublikasikan dan PR belum dibuat.
+CI belum berjalan karena workflow tidak disertakan dan PR belum dibuat.
 
 ### CI untuk Pull Request
 
 Workflow GitHub Actions tidak disertakan dalam cakupan push yang dipilih.
 Jalankan `flutter analyze`, `dart format --set-exit-if-changed .`, dan
-`flutter test` secara lokal sebelum mengirim PR. Workflow dapat ditambahkan
-kemudian jika diperlukan tim.
+`flutter test` secara lokal sebelum mengirim PR. Karena file konfigurasi
+package juga tidak ikut dipush, reviewer perlu mendapatkan file tersebut
+terlebih dahulu untuk mengulang pemeriksaan dari clone.
 
 ### Checklist kesiapan tengah semester
 
@@ -291,16 +356,18 @@ menganggap perbedaan tersebut sebagai bug tanpa kebutuhan migrasi.
 
 ### Hasil verifikasi awal
 
-Belum ada PR Week 8, jadi catatan AI merupakan review awal terhadap kode
-salinan Week 7, bukan review PR sejawat. Tindak lanjut yang sudah dilakukan:
+Belum ada PR Week 8, jadi catatan berikut merupakan pemeriksaan awal terhadap
+kode branch fitur, bukan temuan dari PR tertentu. Lima poin dirangkum sebagai
+berikut:
 
-1. **Diterima:** usulan widget test untuk judul kosong. Test baru membuktikan
-   validasi menolak input dan tidak menyimpan catatan.
-2. **Perlu dibahas:** pertahankan daftar Notes dan beri umpan balik saat operasi
-   gagal; perubahan perilaku belum diterapkan.
-3. **Ditolak:** memindahkan wiring repository hanya untuk menghilangkan import
-   implementasi dari provider. Provider menjadi composition root; domain tetap
-   tidak mengimpor Flutter, Dio, atau SQLite.
+1. **Perlu diperbaiki:** kegagalan operasi Notes membuat daftar diganti layar
+   error umum; pertahankan data dan tampilkan umpan balik aksi.
+2. **Diterima dan diterapkan:** tambah widget test untuk judul kosong.
+3. **Saran test:** tambahkan kasus judul yang hanya berisi spasi.
+4. **Ditolak:** memindahkan wiring provider yang berfungsi sebagai composition
+   root; domain tetap tidak mengimpor Flutter, Dio, atau SQLite.
+5. **Tidak ditemukan cacat:** test membuktikan kegagalan refresh Posts tetap
+   mempertahankan cache; migrasi Navigator ke GoRouter juga tidak diperlukan.
 
 Alasan dan bukti rinci ada di [`docs/ai-review-vs-keputusan.md`](docs/ai-review-vs-keputusan.md).
 Saran AI harus diverifikasi dengan kode, test, dan aturan dependency sebelum
@@ -375,7 +442,7 @@ lebih mudah diulang, tetapi bukan bukti bahwa radio jaringan perangkat mati.
 
 ### Tugas portfolio Week 8
 
-Selesaikan langkah berikut bersama pasangan:
+Alur tugas yang disarankan codelab adalah:
 
 1. Buat issue dan satu PR kecil dari branch `feature/*` menuju `develop`.
 2. Isi PR dengan masalah, solusi, cara uji, dan screenshot aplikasi.
@@ -387,14 +454,32 @@ Selesaikan langkah berikut bersama pasangan:
 Peta status tersedia di
 [`docs/review-checklist.md`](docs/review-checklist.md).
 
-### Pertanyaan refleksi
+### Refleksi
 
-Jawab setelah peer review selesai:
+1. **LGTM buta vs approve bertanggung jawab.** LGTM buta menyatakan setuju
+   tanpa memeriksa bukti. Approve bertanggung jawab berarti memahami konteks,
+   menelusuri jalur sukses dan gagal, memeriksa test, dan menilai dampak
+   perubahan. LGTM buta bisa meloloskan state yang salah, kegagalan yang tidak
+   ditangani, atau regresi yang baru diketahui pengguna.
+2. **Request changes vs saran.** Gunakan **Request changes** bila temuan dapat
+   menyebabkan perilaku salah, crash, data tidak tersedia/hilang, pelanggaran
+   aturan arsitektur yang disepakati, atau kriteria tugas tidak terpenuhi.
+   Komentar saran cukup untuk peningkatan keterbacaan/opsional yang tidak
+   menghalangi perilaku maupun pemeliharaan.
+3. **Saran yang ditolak.** Pemindahan wiring repository hanya karena provider
+   mengimpor implementasi data tidak diperlukan. Provider berfungsi sebagai
+   composition root; pemeriksaan menunjukkan domain tidak mengimpor Flutter,
+   Dio, atau SQLite. Migrasi Navigator ke GoRouter juga tidak diperlukan:
+   tidak ada kebutuhan perubahan atau cacat yang terbukti.
+4. **Perbaikan yang dilakukan.** Widget test ditambahkan untuk memastikan
+   judul catatan kosong ditolak dan tidak disimpan. Dampaknya, validasi yang
+   sebelumnya tampak pada implementasi UI kini memiliki pemeriksaan regresi
+   otomatis.
 
-- Apa beda LGTM buta dengan approve yang bertanggung jawab? Apa risikonya?
-- Kapan komentar harus berstatus **Request changes**, dan kapan cukup saran?
-- Saran AI mana yang ditolak atau disederhanakan, dan apa alasan teknisnya?
-- Apa satu hal yang diperbaiki setelah review sejawat dan apa dampaknya?
+Temuan perilaku yang masih perlu ditindaklanjuti adalah kegagalan add/edit/
+delete Notes mengubah seluruh provider menjadi `AsyncError`, sehingga daftar
+yang sebelumnya tampil digantikan layar error umum. Kode belum diubah; rincian
+dan usulan perbaikannya tercatat di [`docs/ai-review-vs-keputusan.md`](docs/ai-review-vs-keputusan.md).
 
 ### Referensi
 

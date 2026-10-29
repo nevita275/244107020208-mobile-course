@@ -11,36 +11,29 @@ Berikan 5 temuan teratas + level (blocker/saran)
 + alasan + usulan potongan kode perbaikan.
 ```
 
-## Batas review
+## Batas dan hasil review
 
-Belum ada PR Week 8. Review awal berikut memeriksa salinan kode Week 7 di
-project ini; bukan review PR sejawat. Bukti merujuk source dan test lokal, dan
-setiap usulan perlu dinilai oleh author sebelum diterapkan.
-Prompt codelab menyebut GoRouter, tetapi aplikasi ini memakai Navigator; review
-tidak menganggap ketiadaan GoRouter sebagai bug.
+Review ini dilakukan AI atas permintaan author terhadap kode project Week 8
+yang merupakan lanjutan Week 7. Ini bukan review sejawat dan bukan review
+perubahan pada Pull Request GitHub; PR Week 8 belum dibuat. Prompt menyebut
+GoRouter, tetapi aplikasi memakai Navigator. Perbedaan tersebut tidak dianggap
+bug tanpa kebutuhan migrasi.
 
-## Temuan awal dan keputusan
+Lima poin berikut adalah temuan dan kandidat yang diverifikasi. Tidak semua
+kandidat AI merupakan cacat; hal yang ditolak atau dipastikan bukan bug dicatat
+agar tidak diterapkan mentah-mentah.
 
-| # | Level | Usulan AI | Bukti | Keputusan author |
-|---|---|---|---|---|
-| 1 | Saran | Tambahkan widget test untuk memastikan judul kosong/spasi ditolak dan dialog tidak mengembalikan draft. | Validator ada di `lib/features/notes/presentation/pages/notes_page.dart`; awalnya belum ada test widget khusus dialog. | **Terima dan diterapkan.** [`test/notes_page_test.dart`](../test/notes_page_test.dart) memastikan judul kosong ditolak dan tidak ada catatan yang ditambahkan. |
-| 2 | Saran | Pertahankan daftar Notes dan beri umpan balik aksi saat add/update/delete gagal, alih-alih mengubah seluruh body menjadi tampilan error. | `NotesNotifier.add/updateNote/remove` memakai `AsyncValue.guard`; `NotesPage` menampilkan body error penuh pada cabang `notes.when(error: ...)`. | **Terima sebagai usulan untuk dibahas di PR.** Ubah state/error UX hanya bila pasangan menyetujui perilaku yang diharapkan dan test ditambahkan. |
-| 3 | Saran (ditolak) | Memindahkan seluruh wiring konkret repository dari provider Notes karena provider mengimpor implementasi data dan pembuka SQLite. | `lib/features/notes/presentation/providers/notes_providers.dart` melakukan wiring implementasi. Widget memakai provider, bukan membuat Dio/SQLite/repository sendiri. | **Tolak untuk perubahan ini.** Provider tersebut berfungsi sebagai composition root DI yang sudah dipakai project; domain tetap tidak bergantung pada Flutter/SQLite/Dio. Memindahkan wiring hanya untuk menghilangkan import tidak membuktikan perbaikan dependency rule. |
+| # | Level | Temuan/kandidat | Bukti dan keputusan |
+|---|---|---|---|
+| 1 | Saran penting | Jika operasi add/edit/delete gagal, pertahankan daftar catatan dan tampilkan umpan balik kegagalan operasi. | **Benar, belum diperbaiki.** `NotesNotifier.add/updateNote/remove` menggunakan `AsyncValue.guard`, sehingga kegagalan membuat state `AsyncError`. `NotesPage` merender satu tampilan error untuk seluruh `notesProvider`; daftar yang sebelumnya tampil hilang dan tidak ada pesan spesifik operasi. Usul: pertahankan nilai sebelumnya dan tampilkan snackbar yang informatif. Tambahkan test notifier/widget untuk memastikan data tetap terlihat saat repository gagal. |
+| 2 | Saran test | Tambahkan test bahwa judul yang hanya berisi spasi ditolak. | **Gap test terkonfirmasi; validasi implementasi sudah benar.** Validator memeriksa `value.trim().isEmpty`, tetapi [`test/notes_page_test.dart`](../test/notes_page_test.dart) saat ini hanya menguji judul kosong. Tambahkan kasus whitespace untuk mencegah regresi. |
+| 3 | Saran (ditolak) | Pindahkan wiring repository karena provider Notes mengimpor implementasi data dan pembuka SQLite. | **Bukan pelanggaran dependency rule pada konteks ini.** Provider dipakai sebagai composition root; UI tidak membuat database/repository sendiri dan domain tidak mengimpor Flutter, Dio, atau SQLite. Memindahkan wiring tanpa kebutuhan tidak memperbaiki arah dependency domain. |
+| 4 | Saran (ditolak) | Migrasikan Navigator ke GoRouter karena GoRouter disebut di prompt. | **Bukan temuan.** Project Week 7 yang direview memang memakai Navigator. Prompt memberikan konteks, bukan mandat migrasi router; tidak ada bug yang dibuktikan oleh penggunaan Navigator. |
+| 5 | Verifikasi positif | Periksa apakah refresh Posts yang gagal menghilangkan data cache. | **Tidak ditemukan cacat pada jalur yang diuji.** `PostsNotifier.refresh` mempertahankan `previous` saat fetch gagal, dan test `refresh gagal mempertahankan cache dan menyampaikan failure` memverifikasi posts lama tetap tersedia serta failure diteruskan. |
 
-## Verifikasi keputusan
+## Bukti test yang sudah diterapkan
 
-- Temuan 1 dikonfirmasi sebagai gap test lewat struktur `test/` dan kode
-  validator; validator sudah ada, jadi jangan menyatakan fitur validasi hilang.
-  Widget test baru lulus di pemeriksaan Week 8.
-- Temuan 2 dikonfirmasi dengan menelusuri perubahan state notifier sampai
-  rendering `AsyncError`; perilaku belum diubah.
-- Temuan 3 ditolak setelah memeriksa arah dependency: detail data hanya dirakit
-  pada provider, sedangkan kontrak domain tidak mengimpor driver.
-- Belum ada hasil review teman, komentar PR, atau bukti screenshot Week 8.
-
-## Contoh tindak lanjut yang diusulkan
-
-Widget test untuk temuan 1 memakai interaksi form yang sama dengan pengguna:
+Widget test untuk judul kosong memakai interaksi form pengguna:
 
 ```dart
 await tester.tap(find.widgetWithText(FloatingActionButton, 'Tambah'));
@@ -50,9 +43,14 @@ await tester.pumpAndSettle();
 expect(find.text('Judul wajib diisi'), findsOneWidget);
 ```
 
-Untuk temuan 2, perubahan perlu mempertahankan data sebelumnya dan meneruskan
+Test itu sudah lulus dalam pemeriksaan Week 8 dan memastikan catatan tidak
+ditambahkan saat judul kosong.
+
+## Contoh tindak lanjut yang diusulkan
+
+Untuk temuan 1, perubahan perlu mempertahankan data sebelumnya dan meneruskan
 error ke UI agar dapat ditampilkan sebagai snackbar. Contoh pola yang perlu
-diadaptasi dan diuji (bukan perubahan yang sudah diterapkan):
+diadaptasi dan diuji (belum diterapkan):
 
 ```dart
 final previousNotes = state.value ?? const <Note>[];
@@ -64,5 +62,7 @@ try {
 }
 ```
 
-Sebelum demo, author tetap harus menjelaskan bukti ini tanpa mengandalkan
-ringkasan AI.
+Temuan 1 belum diperbaiki dan harus dipertimbangkan sebelum menyatakan review
+selesai. Hasil pemeriksaan saat ini: `flutter analyze` lulus dan seluruh 23
+test lulus. Tidak ada persetujuan reviewer manusia; AI tidak dapat memberi
+Approve GitHub.

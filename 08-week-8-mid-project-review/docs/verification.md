@@ -12,7 +12,11 @@ Jalankan dari folder `08-week-8-mid-project-review`.
 
 Pemeriksaan dijalankan pada project Week 8 setelah seluruh source dan test
 Week 7 disalin. Widget test baru memverifikasi bahwa judul kosong ditolak.
-Workflow CI GitHub tidak disertakan dalam cakupan file yang akan dipush.
+Pemeriksaan dijalankan dari workspace lokal yang memiliki `pubspec.yaml`,
+`pubspec.lock`, dan `analysis_options.yaml`. File konfigurasi tersebut tidak
+di-commit/push sesuai keputusan author; akibatnya test dan analyzer belum dapat
+diulang dari clone branch remote sampai file konfigurasi disediakan.
+Workflow CI GitHub juga tidak disertakan dalam cakupan file yang dipush.
 
 `flutter run -d 24117RN76O --no-resident` berhasil membangun, memasang, dan
 meluncurkan aplikasi pada perangkat Android 16. Interaksi CRUD/offline dan

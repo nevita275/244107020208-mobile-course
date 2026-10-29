@@ -41,22 +41,22 @@ git status
 
 Saat menyiapkan project ini, `origin/main` berisi folder Week 1–7 dan belum
 memiliki branch remote `develop`. Branch `develop` kemudian dibuat dari
-`origin/main` dan sudah dipush ke remote, sehingga sekarang memuat folder Week
-1–7. Branch fitur Week 8 dibuat dari `develop`; commit `dc39f06` sudah
-dipush, sehingga branch fitur memuat folder Week 1–8.
+`origin/main`; branch fitur Week 8 dibuat dari `develop` dan membawa folder
+Week 1–8.
 
-Branch `main` dan `develop` saat ini berada pada commit yang sama; keduanya
-belum berisi Week 8. Branch fitur Week 8 sudah ada di GitHub, tetapi Pull
-Request belum dibuat. Perbandingan GitHub pada screenshot memilih `main` sebagai
-base; sebelum membuat PR, ubah base menjadi `develop` dan biarkan compare tetap
-`feature/08-week-8-mid-project-review`.
+Issue [#1](https://github.com/nevita275/244107020208-mobile-course/issues/1)
+dan Pull Request
+[#2](https://github.com/nevita275/244107020208-mobile-course/pull/2) sudah
+dibuat. PR menggunakan `develop` sebagai base dan
+`feature/08-week-8-mid-project-review` sebagai compare. PR masih terbuka, jadi
+perubahan Week 8 belum masuk ke `develop` atau `main`.
 
 ### Isi branch sekarang dan untuk Week 9–16
 
 Branch fitur bukan branch terpisah yang hanya berisi satu folder tugas.
 Branch `feature/08-week-8-mid-project-review` membawa riwayat dan folder Week
-1–7 dari `develop`, lalu menambahkan pekerjaan Week 8. Setelah commit Week 8
-di-push, isi branch fitur tersebut akan mencakup Week 1–8.
+1–7 dari `develop`, lalu menambahkan pekerjaan Week 8; saat ini branch tersebut
+mencakup Week 1–8.
 
 Alur kumulatif selanjutnya:
 
@@ -71,7 +71,8 @@ develop (Week 1–7)
 Setelah setiap PR disetujui dan di-merge, `develop` berisi semua minggu yang
 sudah selesai. Branch fitur minggu berikutnya dibuat dari `develop` terbaru,
 sehingga membawa folder minggu sebelumnya dan menambahkan pekerjaan minggu
-baru. Jangan merge Week 8 ke `develop` sebelum PR-nya direview dan disetujui.
+baru. PR Week 8 telah diajukan ke `develop`; integrasi dilakukan setelah
+review dan tindak lanjut yang diperlukan.
 `main` adalah branch rilis; jangan masukkan Week 8 langsung ke `main`. Integrasi
 dari `develop` ke `main` dilakukan melalui PR rilis ketika kumpulan pekerjaan
 memang siap dirilis.
@@ -132,6 +133,9 @@ issue dulu agar tujuan PR dan kriteria selesai jelas:
 
 4. Pilih **Submit new issue** dan catat nomor issue yang dibuat.
 
+Issue untuk project ini sudah tercatat sebagai
+[#1](https://github.com/nevita275/244107020208-mobile-course/issues/1).
+
 ### Membuat Pull Request
 
 Setelah issue dibuat, buka tab **Pull requests** → **New pull request**.
@@ -142,10 +146,12 @@ base:    develop
 compare: feature/08-week-8-mid-project-review
 ```
 
-Screenshot perbandingan sebelumnya memilih `main` sebagai base. Buka dropdown
-base dan ganti ke `develop`; jangan lanjutkan jika base masih `main`. Pastikan
-GitHub menampilkan perubahan Week 8 yang diharapkan, lalu pilih **Create pull
-request**.
+Pilih `develop` sebagai base dan
+`feature/08-week-8-mid-project-review` sebagai compare. Pastikan GitHub
+menampilkan perubahan Week 8 yang diharapkan, lalu pilih **Create pull
+request**. PR untuk project ini sudah dibuat sebagai
+[#2](https://github.com/nevita275/244107020208-mobile-course/pull/2) dan masih
+terbuka.
 
 Isi judul, misalnya:
 
@@ -186,10 +192,14 @@ PR sebaiknya satu fitur, kurang dari 300 baris perubahan, dan dapat direview
 dalam waktu singkat. Jangan menulis `Closes #...` sebelum nomor issue nyata
 tersedia.
 
-### Review sejawat
+### Pemeriksaan dan tindak lanjut review
 
-Reviewer diminta checkout branch, menjalankan aplikasi dan test, lalu menulis
-komentar yang bisa ditindaklanjuti. Cakupan minimum codelab:
+Pemeriksaan teknis dilakukan pada jalur state/error, arsitektur, test, cache,
+dan keterbacaan. Temuan serta usulan tindak lanjut dicatat pada
+[`docs/ai-review-vs-keputusan.md`](docs/ai-review-vs-keputusan.md) dan
+[`docs/review-checklist.md`](docs/review-checklist.md). Untuk memenuhi proses
+peer review codelab, reviewer dapat checkout branch, menjalankan aplikasi dan
+test, lalu memberi komentar yang bisa ditindaklanjuti. Cakupan minimumnya:
 
 - 2 temuan kebenaran: null, state, alur error, atau edge case.
 - 1 temuan arsitektur: arah import, DI, atau model yang bocor ke UI.
@@ -203,6 +213,9 @@ Observasi: fungsi ini mengerjakan validasi dan penyimpanan sekaligus.
 Dampak: aturan validasi sulit diuji terpisah.
 Usulan: tambahkan test untuk judul kosong dan spasi sebelum menyimpan.
 ```
+
+Status GitHub saat dokumentasi ini diperbarui: PR #2 terbuka dan belum memiliki
+keputusan review.
 
 #### Catatan review teknis untuk perubahan ini
 
@@ -231,13 +244,6 @@ Catat keputusan atas setiap temuan dan tindak lanjut di
 [`docs/review-checklist.md`](docs/review-checklist.md). Komentar ini merupakan
 masukan teknis untuk dibahas; status PR tetap **belum di-approve** sampai
 review dan keputusan dicatat pada GitHub.
-
-### Tindak lanjut dan merge
-
-Author menanggapi komentar, memperbaiki yang disepakati, lalu meminta
-re-review. Jangan merge saat status masih **Request changes**. Setelah
-**Approve**, merge melalui GitHub, pastikan issue tertutup, dan hapus branch
-fitur remote bila sudah tidak diperlukan.
 
 </blockquote>
 </details>
@@ -301,7 +307,8 @@ Hasil yang sudah dijalankan pada salinan Week 8:
 | Build dan peluncuran Android | Berhasil pada Android 16. |
 
 Rincian dan batas uji manual ada di [`docs/verification.md`](docs/verification.md).
-CI belum berjalan karena workflow tidak disertakan dan PR belum dibuat.
+PR #2 sudah dibuat. Pemeriksaan otomatis belum tersedia karena workflow CI
+tidak disertakan; hasil di atas merupakan hasil pemeriksaan lokal.
 
 ### CI untuk Pull Request
 
@@ -322,12 +329,16 @@ terlebih dahulu untuk mengulang pemeriksaan dari clone.
   perubahan tampilan pada kedua halaman tersebut.
 - [ ] Jika PR membahas perilaku offline secara khusus, lampirkan juga bukti
   Posts yang benar-benar diambil saat cache/offline aktif.
-- [ ] Buat issue dan PR kecil, lalu dapatkan review dan approve teman.
-- [ ] Tindak lanjuti komentar dan merge PR melalui review.
-- [ ] Perbarui README dengan tautan issue/PR serta bukti hasil aktual.
+- [x] Buat issue #1 dan PR #2 dari branch fitur ke `develop`.
+- [x] Catat pemeriksaan teknis, hasil test lokal, dan temuan untuk ditindaklanjuti.
+- [ ] Dapatkan peer review/keputusan review pada PR; belum ada keputusan di GitHub.
+- [ ] Tindak lanjuti temuan yang disepakati dan integrasikan PR setelah proses review.
+- [x] Cantumkan tautan issue dan PR di README.
 
-Mid review **belum dinyatakan lolos** sampai langkah kolaborasi dan uji manual
-yang tersisa selesai.
+Issue, PR, pemeriksaan teknis, dan dokumentasinya sudah disiapkan. Kriteria
+kolaborasi Week 8 baru dapat dinyatakan tuntas setelah keputusan review dan
+integrasi PR tercatat. Uji manual Notes dan Posts/offline juga masih perlu
+dilakukan dan dicatat.
 
 </blockquote>
 </details>
@@ -354,24 +365,28 @@ Prompt ini disimpan di [`docs/ai-review-vs-keputusan.md`](docs/ai-review-vs-kepu
 Prompt menyebut GoRouter, tetapi aplikasi Week 7 ini memakai Navigator; jangan
 menganggap perbedaan tersebut sebagai bug tanpa kebutuhan migrasi.
 
-### Hasil verifikasi awal
+### Hasil pemeriksaan kode
 
-Belum ada PR Week 8, jadi catatan berikut merupakan pemeriksaan awal terhadap
-kode branch fitur, bukan temuan dari PR tertentu. Lima poin dirangkum sebagai
-berikut:
+Pemeriksaan teknis terhadap perubahan Week 8 telah dilakukan dan hasilnya
+dicatat. Lima poin yang diperiksa:
 
-1. **Perlu diperbaiki:** kegagalan operasi Notes membuat daftar diganti layar
-   error umum; pertahankan data dan tampilkan umpan balik aksi.
-2. **Diterima dan diterapkan:** tambah widget test untuk judul kosong.
-3. **Saran test:** tambahkan kasus judul yang hanya berisi spasi.
-4. **Ditolak:** memindahkan wiring provider yang berfungsi sebagai composition
-   root; domain tetap tidak mengimpor Flutter, Dio, atau SQLite.
-5. **Tidak ditemukan cacat:** test membuktikan kegagalan refresh Posts tetap
-   mempertahankan cache; migrasi Navigator ke GoRouter juga tidak diperlukan.
+1. **Temuan state/error:** kegagalan operasi Notes dapat mengganti daftar
+   dengan layar error umum. Rekomendasi: pertahankan data terakhir, tampilkan
+   umpan balik aksi, dan tambahkan test untuk kegagalan repository. Temuan
+   sudah dicatat; perubahan kode untuk menanganinya belum dibuat.
+2. **Test validasi judul kosong:** widget test sudah ditambahkan dan lulus.
+3. **Cakupan test whitespace:** implementasi memakai `trim().isEmpty`, tetapi
+   belum ada test untuk judul yang hanya berisi spasi.
+4. **Wiring provider:** tidak dipindahkan karena provider berfungsi sebagai
+   composition root dan domain tidak mengimpor Flutter, Dio, atau SQLite.
+5. **Cache Posts dan routing:** test menunjukkan kegagalan refresh tetap
+   mempertahankan cache. Migrasi Navigator ke GoRouter tidak diperlukan tanpa
+   kebutuhan produk.
 
 Alasan dan bukti rinci ada di [`docs/ai-review-vs-keputusan.md`](docs/ai-review-vs-keputusan.md).
-Saran AI harus diverifikasi dengan kode, test, dan aturan dependency sebelum
-diterapkan. Keputusan final tetap milik author.
+Temuan dan keputusan telah didokumentasikan untuk ditindaklanjuti melalui PR.
+Catatan pemeriksaan ini tidak mengubah status review atau persetujuan pada
+GitHub; PR #2 masih terbuka.
 
 </blockquote>
 </details>

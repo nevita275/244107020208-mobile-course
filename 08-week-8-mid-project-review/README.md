@@ -48,8 +48,9 @@ Issue [#1](https://github.com/nevita275/244107020208-mobile-course/issues/1)
 dan Pull Request
 [#2](https://github.com/nevita275/244107020208-mobile-course/pull/2) sudah
 dibuat. PR menggunakan `develop` sebagai base dan
-`feature/08-week-8-mid-project-review` sebagai compare. PR masih terbuka, jadi
-perubahan Week 8 belum masuk ke `develop` atau `main`.
+`feature/08-week-8-mid-project-review` sebagai compare. PR #2 di-merge ke
+`develop` pada 29 Oktober 2026; Week 8 sudah ada di `develop`, tetapi bukan
+berarti otomatis masuk ke `main`.
 
 ### Isi branch sekarang dan untuk Week 9–16
 
@@ -63,7 +64,7 @@ Alur kumulatif selanjutnya:
 ```text
 develop (Week 1–7)
   └── feature/08... (Week 1–7 + perubahan Week 8)
-        └── PR dan review -> merge ke develop (Week 1–8)
+        └── PR #2 -> merge ke develop (Week 1–8)
               └── feature/09... (Week 1–8 + perubahan Week 9)
                     └── PR dan review -> merge ke develop (Week 1–9)
 ```
@@ -71,8 +72,9 @@ develop (Week 1–7)
 Setelah setiap PR disetujui dan di-merge, `develop` berisi semua minggu yang
 sudah selesai. Branch fitur minggu berikutnya dibuat dari `develop` terbaru,
 sehingga membawa folder minggu sebelumnya dan menambahkan pekerjaan minggu
-baru. PR Week 8 telah diajukan ke `develop`; integrasi dilakukan setelah
-review dan tindak lanjut yang diperlukan.
+baru. PR #2 Week 8 sudah terintegrasi ke `develop`. Perbaikan hasil komentar
+reviewer manusia disiapkan terpisah sebagai tindak lanjut; PR #2 sendiri
+tidak dibuka ulang.
 `main` adalah branch rilis; jangan masukkan Week 8 langsung ke `main`. Integrasi
 dari `develop` ke `main` dilakukan melalui PR rilis ketika kumpulan pekerjaan
 memang siap dirilis.
@@ -150,8 +152,9 @@ Pilih `develop` sebagai base dan
 `feature/08-week-8-mid-project-review` sebagai compare. Pastikan GitHub
 menampilkan perubahan Week 8 yang diharapkan, lalu pilih **Create pull
 request**. PR untuk project ini sudah dibuat sebagai
-[#2](https://github.com/nevita275/244107020208-mobile-course/pull/2) dan masih
-terbuka.
+[#2](https://github.com/nevita275/244107020208-mobile-course/pull/2) dan
+di-merge ke `develop` pada 29 Oktober 2026. Perbaikan review yang dibuat
+setelahnya perlu diajukan sebagai PR tindak lanjut baru.
 
 Isi judul, misalnya:
 
@@ -164,11 +167,12 @@ Di deskripsi PR, jelaskan masalah, solusi, cara uji, dan screenshot. Tambahkan
 menggabungkan PR langsung ke `main`; target integrasi mingguan adalah
 `develop`. `main` tetap untuk rilis setelah pekerjaan di `develop` siap.
 
-**Catatan reproduksibilitas:** atas keputusan scope repository, manifest
-Flutter tidak ada dalam branch. Reviewer yang melakukan clone tidak dapat
-langsung menjalankan `flutter pub get`, `flutter analyze`, atau `flutter test`.
-Jelaskan keterbatasan ini pada PR atau sertakan file manifest yang dibutuhkan
-jika reviewer harus menjalankan ulang test dari clone.
+**Catatan reproduksibilitas PR #2:** `pubspec.yaml`, `pubspec.lock`, dan
+`analysis_options.yaml` tidak disertakan dalam PR lama, sehingga pemeriksaan
+tidak dapat diulang dari clone PR tersebut. Perubahan tindak lanjut menyiapkan
+manifest, konfigurasi analyzer, `.gitignore`, dan runner Android yang diperlukan
+agar reviewer dapat mengulang pemeriksaan setelah perubahan itu di-commit dan
+dipush.
 
 ### Isi PR
 
@@ -214,22 +218,21 @@ Dampak: aturan validasi sulit diuji terpisah.
 Usulan: tambahkan test untuk judul kosong dan spasi sebelum menyimpan.
 ```
 
-Status GitHub saat dokumentasi ini diperbarui: PR #2 terbuka dan belum memiliki
-keputusan review.
+Status GitHub: PR #2 sudah merged. Tidak ada review formal GitHub yang tercatat
+sebelum merge; komentar manusia yang diterima kemudian dicatat sebagai masukan
+pasca-merge, bukan sebagai approval sebelum merge.
 
-#### Catatan review teknis untuk perubahan ini
+#### Catatan review PR #2 dan tindak lanjut
 
-Berikut komentar konstruktif yang dapat dipakai untuk membahas PR. Temuan
-pertama perlu dipertimbangkan sebelum merge:
+PR #2 sudah merged sebelum komentar peer reviewer manusia diterima. Komentar
+berikut dicatat sebagai temuan pasca-merge, bukan sebagai formal review sebelum
+merge:
 
-1. **Kebenaran/state — perlu perubahan atau keputusan eksplisit.** Jika
-   repository gagal saat tambah, edit, atau hapus catatan, `AsyncValue.guard`
-   mengubah `notesProvider` menjadi error. Akibatnya daftar yang sebelumnya
-   tampil digantikan error umum. Pertahankan data terakhir dan tampilkan pesan
-   kegagalan yang sesuai aksi; tambahkan test untuk jalur gagal.
-2. **Test — saran.** Validator sudah menolak judul kosong dan memangkas spasi,
-   tetapi widget test baru mencakup nilai kosong. Tambahkan kasus judul yang
-   hanya berisi spasi agar aturan yang sama terlindungi.
+1. **Kebenaran/state — diperbaiki pada perubahan lokal tindak lanjut.**
+   Kegagalan CRUD Notes mempertahankan daftar, meneruskan error, dan
+   menampilkan Snackbar. Test widget mencakup add, update, dan delete gagal.
+2. **Test — diperbaiki pada perubahan lokal tindak lanjut.** Widget test judul
+   whitespace memastikan validasi muncul dan repository tidak dipanggil.
 3. **Arsitektur — tidak perlu perubahan.** Provider yang merakit repository
    dapat berperan sebagai composition root. Pemeriksaan menunjukkan domain
    tidak mengimpor Flutter, Dio, atau SQLite; tidak perlu memindahkan wiring
@@ -241,9 +244,8 @@ pertama perlu dipertimbangkan sebelum merge:
    mudah diikuti dan diuji.
 
 Catat keputusan atas setiap temuan dan tindak lanjut di
-[`docs/review-checklist.md`](docs/review-checklist.md). Komentar ini merupakan
-masukan teknis untuk dibahas; status PR tetap **belum di-approve** sampai
-review dan keputusan dicatat pada GitHub.
+[`docs/review-checklist.md`](docs/review-checklist.md). Komentar teknis tersebut menjadi masukan untuk tindak lanjut; AI review bukan
+peer review manusia dan tidak dapat memberikan approval GitHub.
 
 </blockquote>
 </details>
@@ -265,23 +267,11 @@ flutter devices
 flutter run -d <device-id>
 ```
 
-Atas keputusan author, `pubspec.yaml`, `pubspec.lock`, dan
-`analysis_options.yaml` tidak ikut dipush. Karena itu folder Week 8 pada branch
-remote belum dapat berdiri sendiri sebagai package Flutter: reviewer tidak
-bisa menjalankan `flutter pub get`, `flutter analyze`, atau `flutter test` dari
-hasil clone sampai file konfigurasi itu disediakan. Pemeriksaan yang tercatat
-di bawah dilakukan pada workspace lokal yang masih memiliki file tersebut.
-Ini perlu dipertimbangkan sebelum meminta review yang harus dapat direproduksi.
-
-Runner platform seperti `android/`, `ios/`, dan desktop juga tidak disertakan
-dalam push portfolio ini. Setelah konfigurasi package tersedia, buat ulang
-runner Android sebelum menjalankan aplikasi:
-
-```powershell
-flutter create --platforms android .
-flutter pub get
-flutter run -d <device-id>
-```
+Manifest Flutter dan konfigurasi analyzer berada di package Week 8.
+`android/` menyertakan runner yang diperlukan untuk build Android dari clone.
+Jangan commit file lokal `android/local.properties`, cache, atau hasil build.
+Flutter dapat membuat file Gradle wrapper yang dikecualikan jika belum tersedia.
+Runner iOS dan desktop tidak disertakan dalam portfolio ini.
 
 Project mewarisi aplikasi Week 7: Notes menggunakan SQLite lokal, sedangkan
 Posts mengambil data melalui Dio dan memakai cache lokal. Web tersedia sebagai
@@ -303,20 +293,22 @@ Hasil yang sudah dijalankan pada salinan Week 8:
 |---|---|
 | `flutter analyze` | Lulus — tidak ada masalah. |
 | `dart format --set-exit-if-changed .` | Lulus — 30 file, tidak ada yang berubah. |
-| `flutter test` | Lulus — 23 test, termasuk widget test validasi judul kosong. |
-| Build dan peluncuran Android | Berhasil pada Android 16. |
+| `flutter test` | Lulus — 27 test, termasuk judul kosong, whitespace, dan kegagalan CRUD Notes. |
+| `flutter build apk --debug` | Lulus pada workspace lokal; belum diuji dari clone bersih. |
+| Build, instalasi, dan peluncuran Android | Sebelumnya berhasil pada Android 16. |
 
 Rincian dan batas uji manual ada di [`docs/verification.md`](docs/verification.md).
-PR #2 sudah dibuat. Pemeriksaan otomatis belum tersedia karena workflow CI
-tidak disertakan; hasil di atas merupakan hasil pemeriksaan lokal.
+PR #2 sudah merged. Pemeriksaan otomatis CI belum tersedia karena workflow
+GitHub Actions tidak disertakan; hasil di atas merupakan hasil pemeriksaan
+lokal.
 
 ### CI untuk Pull Request
 
 Workflow GitHub Actions tidak disertakan dalam cakupan push yang dipilih.
-Jalankan `flutter analyze`, `dart format --set-exit-if-changed .`, dan
-`flutter test` secara lokal sebelum mengirim PR. Karena file konfigurasi
-package juga tidak ikut dipush, reviewer perlu mendapatkan file tersebut
-terlebih dahulu untuk mengulang pemeriksaan dari clone.
+Jalankan `flutter pub get`, `flutter analyze`,
+`dart format --set-exit-if-changed .`, dan `flutter test` secara lokal sebelum
+mengirim PR. Setelah manifest dan lockfile tindak lanjut masuk ke branch,
+reviewer dapat mengulang test dari clone bersih.
 
 ### Checklist kesiapan tengah semester
 
@@ -331,14 +323,15 @@ terlebih dahulu untuk mengulang pemeriksaan dari clone.
   Posts yang benar-benar diambil saat cache/offline aktif.
 - [x] Buat issue #1 dan PR #2 dari branch fitur ke `develop`.
 - [x] Catat pemeriksaan teknis, hasil test lokal, dan temuan untuk ditindaklanjuti.
-- [ ] Dapatkan peer review/keputusan review pada PR; belum ada keputusan di GitHub.
-- [ ] Tindak lanjuti temuan yang disepakati dan integrasikan PR setelah proses review.
+- [x] PR #2 terintegrasi ke `develop`.
+- [x] Perbaikan CRUD Notes dan test whitespace disiapkan sebagai tindak lanjut.
+- [ ] Ajukan PR tindak lanjut dan minta peer review manusia sebelum merge.
 - [x] Cantumkan tautan issue dan PR di README.
 
-Issue, PR, pemeriksaan teknis, dan dokumentasinya sudah disiapkan. Kriteria
-kolaborasi Week 8 baru dapat dinyatakan tuntas setelah keputusan review dan
-integrasi PR tercatat. Uji manual Notes dan Posts/offline juga masih perlu
-dilakukan dan dicatat.
+Issue #1 dan integrasi PR #2 ke `develop` sudah tercatat. Perbaikan hasil
+komentar reviewer manusia masih berupa perubahan lokal; PR tindak lanjut dan
+formal review sebelum merge belum dilakukan. Uji manual Notes dan Posts/offline
+juga masih perlu dilakukan dan dicatat.
 
 </blockquote>
 </details>
@@ -370,23 +363,23 @@ menganggap perbedaan tersebut sebagai bug tanpa kebutuhan migrasi.
 Pemeriksaan teknis terhadap perubahan Week 8 telah dilakukan dan hasilnya
 dicatat. Lima poin yang diperiksa:
 
-1. **Temuan state/error:** kegagalan operasi Notes dapat mengganti daftar
-   dengan layar error umum. Rekomendasi: pertahankan data terakhir, tampilkan
-   umpan balik aksi, dan tambahkan test untuk kegagalan repository. Temuan
-   sudah dicatat; perubahan kode untuk menanganinya belum dibuat.
+1. **Temuan state/error:** sudah diperbaiki pada perubahan lokal tindak lanjut.
+   Kegagalan CRUD mempertahankan daftar, melempar ulang error, dan menampilkan
+   Snackbar. Test widget untuk kegagalan add/update/delete memverifikasi daftar
+   serta pesan kegagalan.
 2. **Test validasi judul kosong:** widget test sudah ditambahkan dan lulus.
-3. **Cakupan test whitespace:** implementasi memakai `trim().isEmpty`, tetapi
-   belum ada test untuk judul yang hanya berisi spasi.
+3. **Cakupan test whitespace:** widget test judul whitespace sudah ditambahkan;
+   validator `trim().isEmpty` menolak input tersebut.
 4. **Wiring provider:** tidak dipindahkan karena provider berfungsi sebagai
    composition root dan domain tidak mengimpor Flutter, Dio, atau SQLite.
 5. **Cache Posts dan routing:** test menunjukkan kegagalan refresh tetap
    mempertahankan cache. Migrasi Navigator ke GoRouter tidak diperlukan tanpa
    kebutuhan produk.
 
-Alasan dan bukti rinci ada di [`docs/ai-review-vs-keputusan.md`](docs/ai-review-vs-keputusan.md).
-Temuan dan keputusan telah didokumentasikan untuk ditindaklanjuti melalui PR.
-Catatan pemeriksaan ini tidak mengubah status review atau persetujuan pada
-GitHub; PR #2 masih terbuka.
+Alasan dan bukti rinci ada di
+[`docs/ai-review-vs-keputusan.md`](docs/ai-review-vs-keputusan.md). AI review
+dan komentar peer reviewer manusia merupakan masukan berbeda; perubahan
+tindak lanjut belum dikomit atau dipush. PR #2 tetap merged.
 
 </blockquote>
 </details>
@@ -402,10 +395,12 @@ GitHub; PR #2 masih terbuka.
 
 - Mempertahankan aplikasi Week 7 Notes dan Posts sebagai project yang direview.
 - Memperbarui nama package menjadi `week8_mid_project_review`.
-- Menambahkan widget test untuk memastikan judul kosong tidak dapat disimpan.
+- Menambahkan widget test untuk validasi judul kosong dan whitespace serta
+  kegagalan operasi CRUD Notes.
 - Menambahkan dokumentasi checklist review, template PR, dan keputusan AI.
-- Menambahkan `.gitignore` agar file generated dan runner platform tidak ikut
-  dalam push portfolio.
+- Menambahkan `.gitignore` agar cache, file lokal/sensitif, dan hasil build
+  tidak ikut push; runner Android yang dibutuhkan untuk build tetap dapat
+  dilacak.
 
 ### Mengambil screenshot Posts dengan cache
 
@@ -436,7 +431,9 @@ lebih mudah diulang, tetapi bukan bukti bahwa radio jaringan perangkat mati.
 ### Uji manual yang masih perlu dilakukan
 
 - [x] Aplikasi berhasil di-build, dipasang, dan diluncurkan pada Android 16.
-- [x] Widget test judul kosong lulus.
+- [x] Widget test judul kosong dan whitespace lulus.
+- [x] Widget test kegagalan add, update, dan delete mempertahankan daftar serta
+  menampilkan pesan.
 - [ ] Uji tambah, edit, dan hapus Notes di perangkat.
 - [ ] Uji Posts online, cache, dan mode pesawat/offline di perangkat.
 - [x] Gunakan screenshot Notes dan Posts yang tersedia untuk dokumentasi
@@ -486,10 +483,12 @@ Peta status tersedia di
    composition root; pemeriksaan menunjukkan domain tidak mengimpor Flutter,
    Dio, atau SQLite. Migrasi Navigator ke GoRouter juga tidak diperlukan:
    tidak ada kebutuhan perubahan atau cacat yang terbukti.
-4. **Perbaikan yang dilakukan.** Widget test ditambahkan untuk memastikan
-   judul catatan kosong ditolak dan tidak disimpan. Dampaknya, validasi yang
-   sebelumnya tampak pada implementasi UI kini memiliki pemeriksaan regresi
-   otomatis.
+4. **Perbaikan yang disiapkan.** Perubahan lokal tindak lanjut menjaga daftar
+   Notes saat CRUD gagal, meneruskan error ke UI untuk Snackbar, dan menguji
+   add/update/delete gagal. Test validasi judul kosong dan whitespace juga
+   memastikan repository tidak dipanggil saat input tidak valid. Hasil
+   verifikasi terbaru: `flutter analyze` lulus dan `flutter test` lulus dengan
+   27 test. Perubahan ini belum dikomit atau dipush.
 
 Temuan perilaku yang masih perlu ditindaklanjuti adalah kegagalan add/edit/
 delete Notes mengubah seluruh provider menjadi `AsyncError`, sehingga daftar

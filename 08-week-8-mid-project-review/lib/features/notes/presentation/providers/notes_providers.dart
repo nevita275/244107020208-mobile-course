@@ -35,7 +35,8 @@ class NotesNotifier extends AsyncNotifier<List<Note>> {
   }
 
   Future<void> add(String title, String body) async {
-    state = await AsyncValue.guard(() async {
+    final previousNotes = state.value ?? const <Note>[];
+    try {
       final result = await ref
           .read(noteRepositoryProvider)
           .addNote(title: title, body: body);
@@ -45,12 +46,16 @@ class NotesNotifier extends AsyncNotifier<List<Note>> {
         throw const LocalFailure('Catatan tidak dapat disimpan.');
       }
       ref.invalidate(dirtyCountProvider);
-      return [note, ...(state.value ?? const <Note>[])];
-    });
+      state = AsyncData([note, ...(state.value ?? previousNotes)]);
+    } catch (error, stackTrace) {
+      state = AsyncData(state.value ?? previousNotes);
+      Error.throwWithStackTrace(error, stackTrace);
+    }
   }
 
   Future<void> updateNote(Note note) async {
-    state = await AsyncValue.guard(() async {
+    final previousNotes = state.value ?? const <Note>[];
+    try {
       final result = await ref.read(noteRepositoryProvider).updateNote(note);
       if (result.failure case final failure?) throw failure;
       final updatedNote = result.note;
@@ -59,26 +64,33 @@ class NotesNotifier extends AsyncNotifier<List<Note>> {
       }
       ref.invalidate(dirtyCountProvider);
       final updatedNotes =
-          (state.value ?? const <Note>[])
+          (state.value ?? previousNotes)
               .map(
                 (current) =>
                     current.id == updatedNote.id ? updatedNote : current,
               )
               .toList()
             ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-      return updatedNotes;
-    });
+      state = AsyncData(updatedNotes);
+    } catch (error, stackTrace) {
+      state = AsyncData(state.value ?? previousNotes);
+      Error.throwWithStackTrace(error, stackTrace);
+    }
   }
 
   Future<void> remove(int id) async {
-    state = await AsyncValue.guard(() async {
+    final previousNotes = state.value ?? const <Note>[];
+    try {
       final failure = await ref.read(noteRepositoryProvider).deleteNote(id);
       if (failure != null) throw failure;
       ref.invalidate(dirtyCountProvider);
-      return (state.value ?? const <Note>[])
-          .where((note) => note.id != id)
-          .toList();
-    });
+      state = AsyncData(
+        (state.value ?? previousNotes).where((note) => note.id != id).toList(),
+      );
+    } catch (error, stackTrace) {
+      state = AsyncData(state.value ?? previousNotes);
+      Error.throwWithStackTrace(error, stackTrace);
+    }
   }
 }
 

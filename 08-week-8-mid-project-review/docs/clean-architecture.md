@@ -69,9 +69,10 @@ Hasil pemeriksaan pada `lib/features/notes/presentation` dan `lib/core`:
 2. Domain dan core tidak mengimpor Flutter, Dio, SQLite, atau Firebase.
 3. Mapping `toMap`/`fromMap` dan JSON hanya berada di model data.
 
-Jalankan dari folder `07-week-7-clean-architecture`:
+Jalankan dari root repository pada PowerShell:
 
 ```powershell
+Set-Location .\08-week-8-mid-project-review
 rg "Dio\(|openDatabase|getDatabasesPath|FlutterSecureStorage|SharedPreferences\.getInstance|jsonDecode" lib/features/notes/presentation lib/features/posts/presentation lib/pages
 rg "import 'package:flutter|import 'package:dio|import 'package:sqflite|import 'package:firebase" lib/features/notes/domain lib/features/posts/domain lib/core
 rg "toMap|fromMap|toJson|fromJson" lib/features/notes/domain lib/features/posts/domain
@@ -79,10 +80,9 @@ flutter analyze
 flutter test
 ```
 
-Semua pencarian `rg` di atas menghasilkan nol temuan. Output perintah disimpan
-di [verification.md](verification.md). `flutter analyze` dan `flutter test`
-dijalankan di folder Week 7. Screenshot baseline dan status screenshot sesudah
-refactor dicatat di [verification.md](verification.md).
+Semua pencarian `rg` di atas menghasilkan nol temuan. Output dan verifikasi
+project Week 8 dicatat di [verification.md](verification.md). Jangan menjalankan
+perintah Flutter dari folder Week 7 saat memverifikasi perubahan Week 8.
 
 ## Batasan dan trade-off
 

@@ -7,15 +7,24 @@ class FakeNoteRepository implements NoteRepository {
     List<Note> items = const [],
     this.fetchFailure,
     this.operationFailure,
+    this.addFailure,
+    this.updateFailure,
+    this.deleteFailure,
     this.dirtyCount,
   }) : items = List.of(items);
 
   final List<Note> items;
   final Failure? fetchFailure;
   final Failure? operationFailure;
+  final Failure? addFailure;
+  final Failure? updateFailure;
+  final Failure? deleteFailure;
   int? dirtyCount;
   int _nextId = 1;
   bool updateCalled = false;
+  int addCalls = 0;
+  int updateCalls = 0;
+  int deleteCalls = 0;
   Note? updatedNote;
   int markAllSyncedCalls = 0;
 
@@ -32,8 +41,10 @@ class FakeNoteRepository implements NoteRepository {
     required String title,
     String body = '',
   }) async {
-    if (operationFailure != null) {
-      return (note: null, failure: operationFailure);
+    addCalls++;
+    final failure = addFailure ?? operationFailure;
+    if (failure != null) {
+      return (note: null, failure: failure);
     }
     final note = Note(
       id: _nextId++,
@@ -48,10 +59,12 @@ class FakeNoteRepository implements NoteRepository {
 
   @override
   Future<({Note? note, Failure? failure})> updateNote(Note note) async {
-    if (operationFailure != null) {
-      return (note: null, failure: operationFailure);
-    }
     updateCalled = true;
+    updateCalls++;
+    final failure = updateFailure ?? operationFailure;
+    if (failure != null) {
+      return (note: null, failure: failure);
+    }
     updatedNote = Note(
       id: note.id,
       title: note.title,
@@ -66,7 +79,9 @@ class FakeNoteRepository implements NoteRepository {
 
   @override
   Future<Failure?> deleteNote(int id) async {
-    if (operationFailure != null) return operationFailure;
+    deleteCalls++;
+    final failure = deleteFailure ?? operationFailure;
+    if (failure != null) return failure;
     items.removeWhere((note) => note.id == id);
     return null;
   }

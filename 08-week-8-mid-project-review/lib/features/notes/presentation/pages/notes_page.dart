@@ -125,21 +125,43 @@ class NotesPage extends ConsumerWidget {
                   if (draft == null || note.id == null || !context.mounted) {
                     return;
                   }
-                  await ref
-                      .read(notesProvider.notifier)
-                      .updateNote(
-                        Note(
-                          id: note.id,
-                          title: draft.title,
-                          body: draft.body,
-                          updatedAt: note.updatedAt,
-                          dirty: note.dirty,
-                        ),
-                      );
+                  try {
+                    await ref
+                        .read(notesProvider.notifier)
+                        .updateNote(
+                          Note(
+                            id: note.id,
+                            title: draft.title,
+                            body: draft.body,
+                            updatedAt: note.updatedAt,
+                            dirty: note.dirty,
+                          ),
+                        );
+                  } catch (error) {
+                    if (!context.mounted) return;
+                    _showMutationFailure(
+                      context,
+                      error,
+                      'Catatan tidak dapat diperbarui.',
+                    );
+                  }
                 },
                 onDelete: note.id == null
                     ? null
-                    : () => ref.read(notesProvider.notifier).remove(note.id!),
+                    : () async {
+                        try {
+                          await ref
+                              .read(notesProvider.notifier)
+                              .remove(note.id!);
+                        } catch (error) {
+                          if (!context.mounted) return;
+                          _showMutationFailure(
+                            context,
+                            error,
+                            'Catatan tidak dapat dihapus.',
+                          );
+                        }
+                      },
               );
             },
           );
@@ -151,13 +173,33 @@ class NotesPage extends ConsumerWidget {
             context: context,
             builder: (_) => const _NoteDialog(),
           );
-          if (draft == null) return;
-          await ref.read(notesProvider.notifier).add(draft.title, draft.body);
+          if (draft == null || !context.mounted) return;
+          try {
+            await ref.read(notesProvider.notifier).add(draft.title, draft.body);
+          } catch (error) {
+            if (!context.mounted) return;
+            _showMutationFailure(
+              context,
+              error,
+              'Catatan tidak dapat disimpan.',
+            );
+          }
         },
         icon: const Icon(Icons.add),
         label: const Text('Tambah'),
       ),
     );
+  }
+
+  void _showMutationFailure(
+    BuildContext context,
+    Object error,
+    String fallbackMessage,
+  ) {
+    if (!context.mounted) return;
+    final message = error is Failure ? error.message : fallbackMessage;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 }
 

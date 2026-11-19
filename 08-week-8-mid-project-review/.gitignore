@@ -1,0 +1,38 @@
+# Flutter-generated files
+/.dart_tool/
+/.flutter-plugins-dependencies
+/.pub/
+/.pub-cache/
+/build/
+/coverage/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+*.class
+*.log
+*.pyc
+*.swp
+*.symbols
+*.map.json
+
+# Android runner is tracked so a clean clone can build the app.
+# Other platform runners are intentionally not included in the portfolio push.
+/ios/
+/linux/
+/macos/
+/web/
+/windows/
+/.metadata
+
+# IDE and local machine files
+/.idea/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/

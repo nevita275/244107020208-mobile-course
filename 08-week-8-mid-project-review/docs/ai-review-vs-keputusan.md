@@ -11,58 +11,38 @@ Berikan 5 temuan teratas + level (blocker/saran)
 + alasan + usulan potongan kode perbaikan.
 ```
 
-## Batas dan hasil review
+Prompt menyebut GoRouter sebagai konteks, tetapi project menggunakan
+Navigator. Ini bukan bug dan tidak memerlukan migrasi tanpa kebutuhan produk.
 
-Review ini dilakukan AI atas permintaan author terhadap kode project Week 8
-yang merupakan lanjutan Week 7. Ini bukan review sejawat dan bukan review
-perubahan pada Pull Request GitHub; PR Week 8 belum dibuat. Prompt menyebut
-GoRouter, tetapi aplikasi memakai Navigator. Perbedaan tersebut tidak dianggap
-bug tanpa kebutuhan migrasi.
+## Batas review
 
-Lima poin berikut adalah temuan dan kandidat yang diverifikasi. Tidak semua
-kandidat AI merupakan cacat; hal yang ditolak atau dipastikan bukan bug dicatat
-agar tidak diterapkan mentah-mentah.
+Review AI awal dilakukan atas permintaan author terhadap kode Week 8. Review
+tersebut bukan peer review manusia dan tidak menghasilkan approval GitHub.
+PR #2 menggunakan `develop` sebagai base dan branch
+`feature/08-week-8-mid-project-review` sebagai compare; PR itu telah di-merge
+ke `develop` pada 29 Oktober 2026.
 
-| # | Level | Temuan/kandidat | Bukti dan keputusan |
-|---|---|---|---|
-| 1 | Saran penting | Jika operasi add/edit/delete gagal, pertahankan daftar catatan dan tampilkan umpan balik kegagalan operasi. | **Benar, belum diperbaiki.** `NotesNotifier.add/updateNote/remove` menggunakan `AsyncValue.guard`, sehingga kegagalan membuat state `AsyncError`. `NotesPage` merender satu tampilan error untuk seluruh `notesProvider`; daftar yang sebelumnya tampil hilang dan tidak ada pesan spesifik operasi. Usul: pertahankan nilai sebelumnya dan tampilkan snackbar yang informatif. Tambahkan test notifier/widget untuk memastikan data tetap terlihat saat repository gagal. |
-| 2 | Saran test | Tambahkan test bahwa judul yang hanya berisi spasi ditolak. | **Gap test terkonfirmasi; validasi implementasi sudah benar.** Validator memeriksa `value.trim().isEmpty`, tetapi [`test/notes_page_test.dart`](../test/notes_page_test.dart) saat ini hanya menguji judul kosong. Tambahkan kasus whitespace untuk mencegah regresi. |
-| 3 | Saran (ditolak) | Pindahkan wiring repository karena provider Notes mengimpor implementasi data dan pembuka SQLite. | **Bukan pelanggaran dependency rule pada konteks ini.** Provider dipakai sebagai composition root; UI tidak membuat database/repository sendiri dan domain tidak mengimpor Flutter, Dio, atau SQLite. Memindahkan wiring tanpa kebutuhan tidak memperbaiki arah dependency domain. |
-| 4 | Saran (ditolak) | Migrasikan Navigator ke GoRouter karena GoRouter disebut di prompt. | **Bukan temuan.** Project Week 7 yang direview memang memakai Navigator. Prompt memberikan konteks, bukan mandat migrasi router; tidak ada bug yang dibuktikan oleh penggunaan Navigator. |
-| 5 | Verifikasi positif | Periksa apakah refresh Posts yang gagal menghilangkan data cache. | **Tidak ditemukan cacat pada jalur yang diuji.** `PostsNotifier.refresh` mempertahankan `previous` saat fetch gagal, dan test `refresh gagal mempertahankan cache dan menyampaikan failure` memverifikasi posts lama tetap tersedia serta failure diteruskan. |
+Reviewer manusia kemudian meninggalkan komentar pada PR #2 setelah merge.
+GitHub tidak mencatat formal review sebelum merge. Karena itu, komentar manusia
+dicatat sebagai masukan pasca-merge, bukan approval formal pada PR #2.
 
-## Bukti test yang sudah diterapkan
+## Temuan dan keputusan
 
-Widget test untuk judul kosong memakai interaksi form pengguna:
+| # | Temuan | Keputusan dan bukti |
+|---|---|---|
+| 1 | Kegagalan add/edit/delete Notes membuat daftar sebelumnya hilang. | **Diperbaiki pada perubahan lokal tindak lanjut.** `NotesNotifier` mempertahankan data, mengatur state kembali ke `AsyncData`, lalu melempar ulang error. `NotesPage` menampilkan pesan `Failure` atau pesan cadangan melalui Snackbar. Test widget memverifikasi kegagalan ketiga operasi mempertahankan daftar dan menampilkan pesan. |
+| 2 | Belum ada test untuk judul yang hanya berisi spasi. | **Ditutup.** Validator menggunakan `trim().isEmpty`; widget test baru mengisi spasi, memeriksa pesan validasi, dan memastikan repository tidak dipanggil. Test judul kosong tetap ada. |
+| 3 | Pindahkan wiring repository karena provider mengimpor implementasi data. | **Tidak diubah.** Provider menjadi composition root; domain tetap tidak bergantung pada Flutter, Dio, atau SQLite. |
+| 4 | Migrasikan Navigator ke GoRouter karena prompt menyebut GoRouter. | **Tidak diubah.** Tidak ada kebutuhan atau bug yang membenarkan migrasi. |
+| 5 | Refresh Posts yang gagal menghilangkan cache. | **Tidak ada perubahan.** Test yang sudah ada membuktikan cache tetap tersedia dan failure diteruskan. `PostsNotifier.refresh` tidak diubah. |
 
-```dart
-await tester.tap(find.widgetWithText(FloatingActionButton, 'Tambah'));
-await tester.pumpAndSettle();
-await tester.tap(find.widgetWithText(FilledButton, 'Tambah'));
-await tester.pumpAndSettle();
-expect(find.text('Judul wajib diisi'), findsOneWidget);
-```
+## Ringkasan verifikasi
 
-Test itu sudah lulus dalam pemeriksaan Week 8 dan memastikan catatan tidak
-ditambahkan saat judul kosong.
+Pada workspace lokal, hasil pemeriksaan terbaru setelah perubahan Notes:
 
-## Contoh tindak lanjut yang diusulkan
+- `flutter analyze` — lulus, tidak ada masalah.
+- `flutter test` — lulus, 27 test.
 
-Untuk temuan 1, perubahan perlu mempertahankan data sebelumnya dan meneruskan
-error ke UI agar dapat ditampilkan sebagai snackbar. Contoh pola yang perlu
-diadaptasi dan diuji (belum diterapkan):
-
-```dart
-final previousNotes = state.value ?? const <Note>[];
-try {
-  // Jalankan operasi repository dan perbarui state hanya saat sukses.
-} on Failure catch (failure, stackTrace) {
-  state = AsyncData(previousNotes);
-  Error.throwWithStackTrace(failure, stackTrace);
-}
-```
-
-Temuan 1 belum diperbaiki dan harus dipertimbangkan sebelum menyatakan review
-selesai. Hasil pemeriksaan saat ini: `flutter analyze` lulus dan seluruh 23
-test lulus. Tidak ada persetujuan reviewer manusia; AI tidak dapat memberi
-Approve GitHub.
+Empat file perbaikan Notes dan test masih merupakan perubahan lokal yang belum
+dikomit atau dipush. Hasil lokal ini belum berarti perubahan tersebut telah
+ditinjau atau di-approve di GitHub.

@@ -36,61 +36,45 @@ class NotesNotifier extends AsyncNotifier<List<Note>> {
 
   Future<void> add(String title, String body) async {
     final previousNotes = state.value ?? const <Note>[];
-    try {
-      final result = await ref
-          .read(noteRepositoryProvider)
-          .addNote(title: title, body: body);
-      if (result.failure case final failure?) throw failure;
-      final note = result.note;
-      if (note == null) {
-        throw const LocalFailure('Catatan tidak dapat disimpan.');
-      }
-      ref.invalidate(dirtyCountProvider);
-      state = AsyncData([note, ...(state.value ?? previousNotes)]);
-    } catch (error, stackTrace) {
-      state = AsyncData(state.value ?? previousNotes);
-      Error.throwWithStackTrace(error, stackTrace);
+    final result = await ref
+        .read(noteRepositoryProvider)
+        .addNote(title: title, body: body);
+    if (result.failure case final failure?) throw failure;
+    final note = result.note;
+    if (note == null) {
+      throw const LocalFailure('Catatan tidak dapat disimpan.');
     }
+    ref.invalidate(dirtyCountProvider);
+    state = AsyncData([note, ...(state.value ?? previousNotes)]);
   }
 
   Future<void> updateNote(Note note) async {
     final previousNotes = state.value ?? const <Note>[];
-    try {
-      final result = await ref.read(noteRepositoryProvider).updateNote(note);
-      if (result.failure case final failure?) throw failure;
-      final updatedNote = result.note;
-      if (updatedNote == null) {
-        throw const LocalFailure('Catatan tidak dapat diperbarui.');
-      }
-      ref.invalidate(dirtyCountProvider);
-      final updatedNotes =
-          (state.value ?? previousNotes)
-              .map(
-                (current) =>
-                    current.id == updatedNote.id ? updatedNote : current,
-              )
-              .toList()
-            ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-      state = AsyncData(updatedNotes);
-    } catch (error, stackTrace) {
-      state = AsyncData(state.value ?? previousNotes);
-      Error.throwWithStackTrace(error, stackTrace);
+    final result = await ref.read(noteRepositoryProvider).updateNote(note);
+    if (result.failure case final failure?) throw failure;
+    final updatedNote = result.note;
+    if (updatedNote == null) {
+      throw const LocalFailure('Catatan tidak dapat diperbarui.');
     }
+    ref.invalidate(dirtyCountProvider);
+    final updatedNotes =
+        (state.value ?? previousNotes)
+            .map(
+              (current) => current.id == updatedNote.id ? updatedNote : current,
+            )
+            .toList()
+          ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    state = AsyncData(updatedNotes);
   }
 
   Future<void> remove(int id) async {
     final previousNotes = state.value ?? const <Note>[];
-    try {
-      final failure = await ref.read(noteRepositoryProvider).deleteNote(id);
-      if (failure != null) throw failure;
-      ref.invalidate(dirtyCountProvider);
-      state = AsyncData(
-        (state.value ?? previousNotes).where((note) => note.id != id).toList(),
-      );
-    } catch (error, stackTrace) {
-      state = AsyncData(state.value ?? previousNotes);
-      Error.throwWithStackTrace(error, stackTrace);
-    }
+    final failure = await ref.read(noteRepositoryProvider).deleteNote(id);
+    if (failure != null) throw failure;
+    ref.invalidate(dirtyCountProvider);
+    state = AsyncData(
+      (state.value ?? previousNotes).where((note) => note.id != id).toList(),
+    );
   }
 }
 

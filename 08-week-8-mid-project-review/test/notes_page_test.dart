@@ -109,6 +109,31 @@ void main() {
       expect(repository.deleteCalls, 1);
     },
   );
+
+  testWidgets(
+    'gagal CRUD tidak mengganti error pemuatan awal dengan daftar kosong',
+    (tester) async {
+      const fetchFailureMessage = 'Database tidak dapat memuat catatan.';
+      const addFailureMessage = 'Database tidak dapat menyimpan catatan.';
+      final repository = FakeNoteRepository(
+        fetchFailure: const LocalFailure(fetchFailureMessage),
+        addFailure: const LocalFailure(addFailureMessage),
+      );
+      final container = await _pumpNotesPage(tester, repository);
+
+      await tester.tap(find.widgetWithText(FloatingActionButton, 'Tambah'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextFormField), 'Catatan baru');
+      await tester.tap(find.widgetWithText(FilledButton, 'Tambah'));
+      await tester.pumpAndSettle();
+
+      expect(container.read(notesProvider).hasError, isTrue);
+      expect(find.text(fetchFailureMessage), findsOneWidget);
+      expect(find.text('Belum ada catatan'), findsNothing);
+      expect(find.text(addFailureMessage), findsOneWidget);
+      expect(repository.addCalls, 1);
+    },
+  );
 }
 
 Future<ProviderContainer> _pumpNotesPage(
